@@ -1,0 +1,20 @@
+{
+  "name": "socketeer",
+  "version": "0.0.0",
+  "authors": [
+    "Felix Schlitter <felixschlitter@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "rxjs": "~2.3.24",
+    "socket.io-client": "~1.3.3"
+  }
+}
