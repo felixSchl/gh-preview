@@ -1,0 +1,28 @@
+<html>
+  <head>
+
+    <script src="/bower_components/socket.io-client/socket.io.js"></script>
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
+
+    <script type="text/javascript">
+
+      var outputter = io(
+          'http://localhost:1234'
+        , { forceNew: true, query: "type=output" }
+      );
+
+      var inputter = io(
+          'http://localhost:1234'
+        , { forceNew: true, query: "type=input" }
+      );
+
+      inputter.emit('data', "**blah**");
+
+      outputter.on('data', function(data) {
+        console.log(data);
+      });
+    </script>
+  </head>
+  <body>
+  </body>
+</html>
