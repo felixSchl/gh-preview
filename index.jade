@@ -15,7 +15,7 @@ html
     script(type='text/javascript').
 
         var output = Rx.Observable.fromEvent(io(
-            'http://localhost:1234'
+            window.location.href
           , { forceNew: true, query: "type=output" }
         ), 'data');
 
