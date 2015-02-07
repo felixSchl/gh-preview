@@ -1,6 +1,6 @@
 # gh-preview
 
-> Preview github markdown - as you type.
+> Preview Github markdown - as you type
 
 ## Getting started
 
@@ -24,7 +24,7 @@ Starts a `gh-preview` server at <port>.
 
 ## Editor integration
 
-Of course, performing manual `POST` requests is not insanly productive, however
+Of course, performing manual `POST` requests is not insanely productive, however
 it does lend itself very well to integrating with an editor. This can be done in
 one of two ways:
 
@@ -41,3 +41,4 @@ the editor and the preview, but nothing of that sort has been implemented yet
 
 * Show the caret in the output - This requires source-mapping from unrendered
   markdown to the rendered html
+* Synchronize scrolling
