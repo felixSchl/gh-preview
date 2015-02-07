@@ -15,6 +15,7 @@ call s:initVariable("g:ghPreview_autoStart", 1)
 
 python << EOF
 import vim
+PROCESS = None
 EOF
 
 let s:locked=0
@@ -30,6 +31,7 @@ import errno
 import socket
 import subprocess
 import webbrowser
+import platform
 
 try:
     connection = httplib.HTTPConnection(
@@ -49,10 +51,28 @@ try:
 except socket.error as error:
     if error.errno is errno.ECONNREFUSED:
         if vim.eval("g:ghPreview_autoStart") == '1':
-            subprocess.Popen(["gh-preview", vim.eval("g:ghPreview_port")])
-            webbrowser.open("http://localhost:"+vim.eval("g:ghPreview_port"))
+            try:
+                PROCESS = subprocess.Popen(
+                      ["gh-preview", vim.eval("g:ghPreview_port")]
+                    , bufsize = 0
+                    , stdin   = subprocess.PIPE
+                    , stdout  = subprocess.PIPE
+                    , stderr  = subprocess.PIPE
+                )
+                webbrowser.open(
+                    "http://localhost:"+vim.eval("g:ghPreview_port")
+                )
+            except:
+                pass
 
 vim.command("let s:locked=0")
+EOF
+endfu
+
+fu! s:cleanup()
+python << EOF
+if PROCESS is not None:
+    PROCESS.kill()
 EOF
 endfu
 
@@ -61,6 +81,7 @@ fu! s:initBuffer()
         au! * <buffer>
         au BufEnter <buffer> call s:update()
         au CursorHold,CursorHoldI,CursorMoved,CursorMovedI <buffer> call s:update()
+        au VimLeavePre call s:cleanup()
     aug END
     call s:update()
 endfu
