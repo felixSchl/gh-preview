@@ -1,0 +1,35 @@
+html
+  head
+
+    link(href='node_modules/highlight.js/styles/github.css', rel='stylesheet')
+    link(href='assets/style.css',                            rel='stylesheet')
+    link(href='assets/gfm.css',                              rel='stylesheet')
+    link(href='assets/github.css',                           rel='stylesheet')
+    link(href='assets/github2.css',                          rel='stylesheet')
+    link(href='assets/octicons/octicons.css',                rel='stylesheet')
+
+    script(src='/bower_components/rxjs/dist/rx.all.js')
+    script(src='/bower_components/socket.io-client/socket.io.js')
+    script(src='/bower_components/jquery/dist/jquery.js')
+
+    script(type='text/javascript').
+
+        var output = Rx.Observable.fromEvent(io(
+            'http://localhost:1234'
+          , { forceNew: true, query: "type=output" }
+        ), 'data');
+
+        output.subscribe(function(data) {
+            $("#readme>h3>span.title").html(data.title);
+            $("#readme>article").html(data.content);
+        });
+
+  body
+    #readme.boxed-group.flush.clearfix.announce.instapaper_body.md
+      h3
+        span.octicon.octicon-book
+        span.title
+            | README.md
+      article.markdown-body.entry-content(
+        itemprop='mainContentOfPage'
+      )
