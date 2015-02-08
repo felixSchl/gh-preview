@@ -2,16 +2,17 @@
 
 > Preview Github markdown - as you type
 
-The most exciting part in a project's lifetime is summarising how awesome it
-is in a _Readme_ file.  However, to get the wording and formatting just right,
-one would need to write the file using the online editor, switching back and
-forth between editing and pre-viewing, loosing all the efficiencies of using a
-copy of the vim text editor, or whatever it is that makes you fast.
+The most exciting part in a project's lifetime is bragging about how awesome it
+is, usually in it's _Readme_ file.  However, to get the wording and formatting
+just right, one would need to write the file using Github's online editor,
+switching back and forth between editing and previewing, loosing all the
+efficiencies of using a copy of the vim text editor, or whatever it is that
+makes you fast.
 
 **Features**:
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
-* Editor-friendly (_not so much user-friendly_)
+* [Editor-friendly (_not so much user-friendly_)](#test)
 
 Uses [marked](https://www.npmjs.com/package/marked) for markdown rendering, and
 [highlight.js](https://highlightjs.org/) for syntax highlighting. The server is
@@ -58,6 +59,8 @@ Plugin 'felixschl/gh-preview', { rtp: 'vim/' }
 
 #### Options
 
+These optional settings go into your `.vimrc` if requried:
+
 ```vim
 " Start automatically when editing markdown files. (Default: 1)
 let g:ghPreview_autoStart=1
@@ -82,3 +85,11 @@ likely to remain wishes for the future to come.
 * Show the caret in the output
 * Synchronize scrolling
 * Preview changes
+* Theme for bitbucket projects
+* Anchor tag support for permalinks in headings
+* Implement server in pure python and ship with vim plugin
+* Implement `:GhPreviewOpenBrowser` command
+* Implement `:GhPreviewStart` command
+* Implement `:GhPreviewStop` command
+* Improve error reporting if the server goes away, etc.
+* Use `forever` if installed
