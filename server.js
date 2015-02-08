@@ -1,15 +1,19 @@
-var express = require('express')
-  , Rx      = require('rx')
-  , marked  = require('marked')
-  , _       = require('lodash')
-  , path    = require('path')
-  , fs      = require('fs')
+var express   = require('express')
+  , Rx        = require('rx')
+  , marked    = require('marked')
+  , _         = require('lodash')
+  , path      = require('path')
+  , fs        = require('fs')
+  , highlight = require('highlight.js').highlight
 ;
 
 marked.setOptions({
-  highlight: function (code) {
-    return require('highlight.js').highlightAuto(code).value;
-  }
+    highlight: function (code, lang, callback) {
+        try {
+            code = highlight(lang, code).value;
+        } catch(e) {}
+        callback(null, code);
+    }
 });
 
 var GhPreview = function(port) {
@@ -56,24 +60,51 @@ var GhPreview = function(port) {
     });
 
     self._inputStream
+        .flatMap(function(data) {
+            console.log('[server] De-serializing data...');
+            try {
+                return Rx.Observable.return(JSON.parse(data));
+            } catch(e) {
+                console.log('[server] Failed to de-serialize', e);
+                return Rx.Observable.empty();
+            }
+        })
+        .select(function (data) {
+            console.log('[server] Assigning defaults...');
+            return _.assign(
+                { title:   'README.md'
+                , content: '' }
+                , data
+            );
+        })
         .select(function(data) {
-            try { return JSON.parse(data); } catch(e) { return null; }
-        })
-        .select(function (data) {
-            return _.assign({ title:  'README.md' , content: '' }, data);
-        })
-        .select(function (data) {
-            data.title   = data.file ? path.basename(data.file) : data.title;
-            data.content = marked(data.content);
+            console.log('[server] Resolving file-name...');
+            data.title = data.file
+                ? path.basename(data.file)
+                : data.title
+            ;
             return data;
         })
+        .flatMap(function (data) {
+            console.log('[server] Rendering...');
+            return Rx.Observable.fromNodeCallback(
+                  marked
+                , null
+                , function(html) {
+                    data.content = html;
+                    return data
+                  }
+            )
+            .apply(null, [ data.content ])
+            ;
+        })
         .subscribe(function (data) {
+            console.log('[server] Emitting...');
             _.each(self._outputters, function(outputter) {
                 outputter.emit('data', data);
             })
-        ;
-    });
-
+        })
+    ;
 }
 
 GhPreview.prototype._addOutput = function(socket) {
