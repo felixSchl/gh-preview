@@ -49,8 +49,9 @@ try:
     connection.close()
 
 except socket.error as error:
-    if error.errno is errno.ECONNREFUSED:
-        if vim.eval("g:ghPreview_autoStart") == '1':
+    if error.errno is errno.ECONNREFUSED and\
+       vim.eval("g:ghPreview_autoStart") == '1' and\
+       PROCESS is None:
             try:
                 PROCESS = subprocess.Popen(
                       ["gh-preview", vim.eval("g:ghPreview_port")]
@@ -65,7 +66,8 @@ except socket.error as error:
             except:
                 pass
 
-vim.command("let s:locked=0")
+finally:
+    vim.command("let s:locked=0")
 EOF
 endfu
 
