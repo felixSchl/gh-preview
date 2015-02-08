@@ -20,6 +20,7 @@ html
         ), 'data');
 
         output.subscribe(function(data) {
+            window.document.title = data.title;
             $("#readme>h3>span.title").html(data.title);
             $("#readme>article").html(data.content);
         });
