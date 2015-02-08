@@ -15,7 +15,17 @@ call s:initVariable("g:ghPreview_autoStart", 1)
 
 python << EOF
 import vim
-PROCESS = None
+import sys
+
+PROCESS    = None
+HAS_OPENED = False
+
+def start_browser(url):
+    command =\
+         'open -g'  if sys.platform.startswith('darwin')\
+    else 'start'    if sys.platform.startswith('win')\
+    else 'xdg-open'
+    os.system(command + ' ' + url)
 EOF
 
 let s:locked=0
@@ -33,6 +43,8 @@ import subprocess
 import webbrowser
 import platform
 
+success = False
+
 try:
     connection = httplib.HTTPConnection(
           'localhost'
@@ -48,6 +60,8 @@ try:
     )
     connection.close()
 
+    sucess = True
+
 except socket.error as error:
     if error.errno is errno.ECONNREFUSED and\
        vim.eval("g:ghPreview_autoStart") == '1' and\
@@ -60,14 +74,19 @@ except socket.error as error:
                     , stdout  = subprocess.PIPE
                     , stderr  = subprocess.PIPE
                 )
-                webbrowser.open(
-                    "http://localhost:"+vim.eval("g:ghPreview_port")
-                )
+
+                success = True
+
             except:
                 pass
 
 finally:
     vim.command("let s:locked=0")
+
+if success and not HAS_OPENED:
+    HAS_OPENED = True
+    start_browser('http://localhost:%s/' % vim.eval("g:ghPreview_port"))
+
 EOF
 endfu
 
