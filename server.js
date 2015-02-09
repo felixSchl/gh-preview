@@ -29,7 +29,7 @@ var GhPreview = function(port) {
     self._inputStream = new Rx.Subject()
 
     self._app
-        .set('views', '.')
+        .set('views', __dirname)
         .set('view engine', 'jade')
         .use(express.static(__dirname))
         .get('/', function (req, res) {
