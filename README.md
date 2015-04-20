@@ -6,8 +6,7 @@ The most exciting part in a project's lifetime is bragging about how awesome it
 is, usually in it's _Readme_ file.  However, to get the wording and formatting
 just right, one would need to write the file using Github's online editor,
 switching back and forth between editing and previewing, loosing all the
-efficiencies of using a copy of the vim text editor, or whatever it is that
-makes you fast.
+efficiencies of using a copy of the vim text editor.
 
 **Features**:
 * Preview rendered markdown as you type
@@ -16,8 +15,8 @@ makes you fast.
 
 Uses [marked](https://www.npmjs.com/package/marked) for markdown rendering, and
 [highlight.js](https://highlightjs.org/) for syntax highlighting. The server is
-an [express](https://www.npmjs.com/package/express) app. Server communicates via
-[socket.io](https://www.npmjs.com/package/socket.io).
+an [express](https://www.npmjs.com/package/express) app and accepts
+[socket.io](https://www.npmjs.com/package/socket.io) socket connections.
 
 ## Getting started
 
@@ -71,9 +70,9 @@ let g:ghPreview_port=1234
 
 ## Caveats
 
-Github uses [pygments](http://pygments.org/) for their syntax highlighting.  We
-are using `highlight.js` - which, while awesome - is not `pygments` and
-differences are bound to occur.
+Github uses [pygments](http://pygments.org/) for their syntax highlighting,
+whereas this project uses `highlight.js` - which, while awesome - is not
+`pygments` and differences are bound to occur.
 
 ## Random wishlist
 
@@ -87,9 +86,8 @@ likely to remain wishes for the future to come.
 * Preview changes
 * Theme for bitbucket projects
 * Anchor tag support for permalinks in headings
-* Implement server in pure python and ship with vim plugin
-* Implement `:GhPreviewOpenBrowser` command
-* Implement `:GhPreviewStart` command
-* Implement `:GhPreviewStop` command
+* Implement `:GhPreviewOpenBrowser` command for vim
+* Implement `:GhPreviewStart` command for vim
+* Implement `:GhPreviewStop` command for vim
 * Improve error reporting if the server goes away, etc.
 * Use `forever` if installed
