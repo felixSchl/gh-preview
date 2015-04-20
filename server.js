@@ -36,17 +36,15 @@ var GhPreview = function(port) {
             res.render('index.jade')
         })
         .post('/input', function(req, res) {
-            Rx.Observable.fromEvent(req, 'data')
-                .take(1)
-                .select(function(data) {
-                    return data.toString('utf8');
-                })
-                .subscribe(function(data) {
-                    self._inputStream.onNext(data);
-                    res.statusCode = 200;
-                    res.send('OK');
-                })
-            ;
+            var acc = "";
+            req.on('data', function(data) {
+                acc += (data.toString('utf-8'));
+            });
+            req.on('end', function() {
+                self._inputStream.onNext(acc);
+                res.statusCode = 200;
+                res.send('OK');
+            });
         });
     ;
 
@@ -60,7 +58,9 @@ var GhPreview = function(port) {
     });
 
     self._inputStream
-        .flatMap(function(data) {
+        .distinctUntilChanged()
+        .throttleFirst(10)
+        .flatMapLatest(function(data) {
             console.log('[server] De-serializing data...');
             try {
                 return Rx.Observable.return(JSON.parse(data));
@@ -127,15 +127,6 @@ GhPreview.prototype._addOutput = function(socket) {
             );
         })
     ;
-
-    self._inputStream.onNext(JSON.stringify({
-        content:
-            fs.readFileSync(
-                path.resolve(
-                    __dirname, 'README.md'
-                )
-            ).toString('utf-8')
-    }));
 };
 
 GhPreview.prototype._setInput = function(socket) {
