@@ -11,7 +11,7 @@ efficiencies of using a copy of the vim text editor.
 **Features**:
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
-* [Editor-friendly (_not so much user-friendly_)](#test)
+* [Editor-friendly](#test)
 
 Uses [marked](https://www.npmjs.com/package/marked) for markdown rendering, and
 [highlight.js](https://highlightjs.org/) for syntax highlighting. The server is

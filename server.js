@@ -1,21 +1,12 @@
-var express   = require('express')
-  , Rx        = require('rx')
-  , marked    = require('marked')
-  , _         = require('lodash')
-  , path      = require('path')
-  , fs        = require('fs')
-  , highlight = require('highlight.js').highlight
-  , log4js  = require('log4js')
+var express    = require('express')
+  , Rx         = require('rx')
+  , _          = require('lodash')
+  , path       = require('path')
+  , fs         = require('fs')
+  , log4js     = require('log4js')
+  , Remarkable = require('remarkable')
+  , hljs       = require('highlight.js')
 ;
-
-marked.setOptions({
-    highlight: function (code, lang, callback) {
-        try {
-            code = highlight(lang, code).value;
-        } catch(e) {}
-        callback(null, code);
-    }
-});
 
 /**
  * The github preview server.
@@ -64,6 +55,21 @@ var GhPreview = function(port) {
     self._inputter    = null
     self._inputStream = new Rx.Subject()
     self._logger      = log4js.getLogger('server')
+
+    self._md = new Remarkable({
+        highlight: function (str, lang) {
+            if (lang && hljs.getLanguage(lang)) {
+                try {
+                    return hljs.highlight(lang, str).value;
+                } catch (err) {}
+            }
+            try {
+                return hljs.highlightAuto(str).value;
+            } catch (err) {}
+
+            return '';
+        }
+    });
 
     self._logger.setLevel('INFO');
 
@@ -190,15 +196,10 @@ var GhPreview = function(port) {
          */
         .flatMap(function(data) {
             self._logger.debug('Rendering...');
-            return Rx.Observable.fromNodeCallback(
-                  marked
-                , null
-                , function(html) {
-                    data.markup = html;
-                    return data
-                  }
-            )
-            .apply(null, [ data.markdown ]);
+            return Rx.Observable.return({
+                  title: data.title
+                , markup: self._md.render(data.markdown)
+            });
         })
 
         /**
