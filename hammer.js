@@ -2,6 +2,8 @@ var Promise = require('bluebird')
   , _       = require('lodash')
   , request = Promise.promisifyAll(require('request'))
   , fs      = Promise.promisifyAll(require('fs'))
+  , log4js  = require('log4js')
+  , logger  = log4js.getLogger()
 ;
 
 /**
@@ -16,7 +18,7 @@ var mkGenerator = _.curry(function(content, concurrency, offset) {
                         'http://127.0.0.1:1234/input'
                     , { json: {
                           title: offset * concurrency * (i + 1)
-                        , content: content } }
+                        , markdown: content } }
                 )
                 .spread(_.partialRight(_.result, 'statusCode'))
                 .catch(_.constant({}))
@@ -27,13 +29,13 @@ var mkGenerator = _.curry(function(content, concurrency, offset) {
 /**
  * Perform infinite amount of requests in paced sets.
  */
-var run = function(concurrency, delay) {
+var run = function(logger, concurrency, delay) {
     fs.readFileAsync('./bigReadme.md')
         .then(_.method('toString', 'utf-8'))
         .then(_.partial(mkGenerator, _, concurrency))
         .then(function (generateRequest) {
             return ((function rec(i) {
-                console.log(
+                logger.debug(
                     'Making ' + concurrency + ' concurrent requests (' + i + ')'
                 );
                 return generateRequest(i)
@@ -45,4 +47,5 @@ var run = function(concurrency, delay) {
     ;
 };
 
-run(10, 10);
+logger.info('Starting');
+run(logger, 10, 10);

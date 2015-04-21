@@ -55,7 +55,7 @@ try:
         , '/input'
         , json.dumps({
             'file':    vim.current.buffer.name
-          , 'content': '\n'.join(vim.current.buffer).decode('utf-8')
+          , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
         })
     )
     connection.close()
