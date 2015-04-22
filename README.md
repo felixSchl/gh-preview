@@ -47,13 +47,13 @@ Starts a `gh-preview` server at <port>.
 #### Installation - Plugged.vim
 
 ```vim
-Plug 'felixschl/gh-preview', { rtp: 'vim/' }
+Plug 'felixschl/gh-preview', { 'rtp': 'vim/' }
 ```
 
 #### Installation - Vundle.vim
 
 ```vim
-Plugin 'felixschl/gh-preview', { rtp: 'vim/' }
+Plugin 'felixschl/gh-preview', { 'rtp': 'vim/' }
 ```
 
 #### Options
