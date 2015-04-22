@@ -56,22 +56,19 @@ var GhPreview = function(port) {
     self._inputStream = new Rx.Subject()
     self._logger      = log4js.getLogger('server')
 
-    self._md = new Remarkable({
-        highlight: function (str, lang) {
+    self._md = new Remarkable('full', {
+          highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return hljs.highlight(lang, str).value;
                 } catch (err) {}
             }
-            try {
-                return hljs.highlightAuto(str).value;
-            } catch (err) {}
-
-            return '';
-        }
+            return str;
+          }
+        , html: true
+        , linkify: true
+        , typographer: true
     });
-
-    self._logger.setLevel('INFO');
 
     self._app
 
@@ -92,6 +89,7 @@ var GhPreview = function(port) {
          * Return the currently rendered markup.
          */
         .get('/output', function(req, res) {
+            self._logger.info(self._output.value);
             res
                 .status(200)
                 .json(self._output.value)
@@ -144,11 +142,15 @@ var GhPreview = function(port) {
      */
     self._inputStream
 
+        .tap(function() { self._logger.info('Received unthrottled input'); })
+
         /*
          * Slow the stream down to a
          * reasonable pace.
          */
         .throttleFirst(10)
+
+        .tap(function() { self._logger.info('Processing throttled input...'); })
 
         /*
          * De-serialize the incoming data
@@ -199,7 +201,8 @@ var GhPreview = function(port) {
             return Rx.Observable.return({
                   title: data.title
                 , markup: self._md.render(data.markdown)
-            });
+            })
+            // .timeout();
         })
 
         /**
