@@ -47,16 +47,16 @@ success = False
 
 try:
     connection = httplib.HTTPConnection(
-          'localhost'
-        , vim.eval("g:ghPreview_port")
+        'localhost'
+      , vim.eval("g:ghPreview_port")
     )
     connection.request(
-        'POST'
-        , '/input'
-        , json.dumps({
-            'file':    vim.current.buffer.name
-          , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
-        })
+      'POST'
+      , '/input'
+      , json.dumps({
+          'file':    vim.current.buffer.name
+        , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
+      })
     )
     connection.close()
 
@@ -68,11 +68,11 @@ except socket.error as error:
        PROCESS is None:
             try:
                 PROCESS = subprocess.Popen(
-                      ["gh-preview", vim.eval("g:ghPreview_port")]
-                    , bufsize = 0
-                    , stdin   = subprocess.PIPE
-                    , stdout  = subprocess.PIPE
-                    , stderr  = subprocess.PIPE
+                    ["gh-preview", vim.eval("g:ghPreview_port")]
+                  , bufsize = 0
+                  , stdin   = subprocess.PIPE
+                  , stdout  = subprocess.PIPE
+                  , stderr  = subprocess.PIPE
                 )
 
                 success = True
