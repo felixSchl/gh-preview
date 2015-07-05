@@ -1,73 +1,53 @@
+'use strict';
+
 var express    = require('express')
   , Rx         = require('rx')
   , _          = require('lodash')
   , path       = require('path')
-  , fs         = require('fs')
   , log4js     = require('log4js')
   , Remarkable = require('remarkable')
   , hljs       = require('highlight.js')
 ;
 
 /**
- * The github preview server.
+ * @constructor
  *
- * Create and start the preview server at port `port`.
+ * Github preview server that accepts markdown input
+ * over a socket.io connection or per HTTP POST.
  *
- * To view the currenly rendered output,
- *      visit '/' in the browser.
+ * The produced markdown can be viewed via HTTP GET.
  *
- * To render markdown and update the output,
- *
- *      Either HTTP-POST some `Input` to '/input',
- *      or create a type-`input` socket connection
- *      and emit `Input` messages.
- *
- *      where:
- *
- *          data Input = Input
- *              { title    :: String       -- The title of document
- *              , markdown :: String       -- The unrendered markdown
- *              , file     :: Maybe String -- The originating file
- *              }
- *
- * To view the currently rendered output,
- *      Either  HTTP-GET '/output' and receive `Output`
- *      or create a type-`output` socket connection
- *      and receive a stream of `Output` messages.
- *
- *      where:
- *
- *          data Output = Output
- *              { title  :: String -- The title of the document
- *              , markup :: String -- The rendered markup
- *              }
+ * @param {Number} port
+ * The port to listen on.
  */
-var GhPreview = function(port) {
+function GhPreview(port) {
 
     var self = this;
 
-    self._app         = express();
-    self._port        = port;
-    self._server      = self._app.listen(self._port);
-    self._io          = require('socket.io')(self._server)
-    self._output      = new Rx.BehaviorSubject('')
-    self._outputters  = []
-    self._inputter    = null
-    self._inputStream = new Rx.Subject()
-    self._logger      = log4js.getLogger('server')
+    self._app = express();
+    self._port = port;
+    self._server = self._app.listen(self._port);
+    self._io = require('socket.io')(self._server);
+    self._output = new Rx.BehaviorSubject('');
+    self._outputters = [];
+    self._inputter = null;
+    self._inputStream = new Rx.Subject();
+    self._logger = log4js.getLogger('server');
 
     self._md = new Remarkable('full', {
-          highlight: function (str, lang) {
+        highlight: function (str, lang) {
             if (lang && hljs.getLanguage(lang)) {
                 try {
                     return hljs.highlight(lang, str).value;
-                } catch (err) {}
+                } catch (err) {
+                    // ...
+                }
             }
             return str;
-          }
-        , html: true
-        , linkify: true
-        , typographer: true
+        }
+      , html: true
+      , linkify: true
+      , typographer: true
     });
 
     self._app
@@ -82,7 +62,7 @@ var GhPreview = function(port) {
          * the output itself.
          */
         .get('/', function(req, res) {
-            res.render('index.jade')
+            res.render('index.jade');
         })
 
         /**
@@ -100,7 +80,7 @@ var GhPreview = function(port) {
          * Accept incoming input.
          */
         .post('/input', function(req, res) {
-            var acc = "";
+            var acc = '';
             req.on('data', function(data) {
                 acc += (data.toString('utf-8'));
             });
@@ -109,7 +89,7 @@ var GhPreview = function(port) {
                 res.statusCode = 200;
                 res.send('OK');
             });
-        });
+        })
     ;
 
     /**
@@ -128,12 +108,10 @@ var GhPreview = function(port) {
      *      of `Input`.
      */
     self._io.on('connection', function (socket) {
-        var add; if (add =
-              socket.request._query.type === 'input'  ? self._setInput
-            : socket.request._query.type === 'output' ? self._addOutput
-            : null
-            ) { add.bind(self)(socket); }
-        ;
+        ( socket.request._query.type === 'input'  ? self._setInput
+        : socket.request._query.type === 'output' ? self._addOutput
+        : null
+        ).call(self, socket);
     });
 
     /**
@@ -145,16 +123,14 @@ var GhPreview = function(port) {
         .tap(function() { self._logger.info('Received unthrottled input'); })
 
         /*
-         * Slow the stream down to a
-         * reasonable pace.
+         * Slow the stream down to a reasonable pace.
          */
         .throttleFirst(10)
 
         .tap(function() { self._logger.info('Processing throttled input...'); })
 
         /*
-         * De-serialize the incoming data
-         * from a json-string to `Input`.
+         * De-serialize the incoming data from a json-string to `Input`.
          */
         .flatMapLatest(function(data) {
             self._logger.debug('De-serializing data...');
@@ -167,15 +143,14 @@ var GhPreview = function(port) {
         })
 
         /*
-         * Ensure that `Input` is valid
-         * by providing a sane set of defaults.
+         * Ensure that `Input` is valid by providing a sane set of defaults.
          */
         .select(function (data) {
             self._logger.debug('Assigning defaults...');
             return _.assign(
-                { title:   'README.md'
-                , content: '' }
-                , data
+              { title: 'README.md'
+              , content: '' }
+              , data
             );
         })
 
@@ -186,8 +161,8 @@ var GhPreview = function(port) {
         .select(function(data) {
             self._logger.debug('Resolving file-name...');
             data.title = data.file
-                ? path.basename(data.file)
-                : data.title
+              ? path.basename(data.file)
+              : data.title
             ;
             return data;
         })
@@ -199,10 +174,9 @@ var GhPreview = function(port) {
         .flatMap(function(data) {
             self._logger.debug('Rendering...');
             return Rx.Observable.return({
-                  title: data.title
-                , markup: self._md.render(data.markdown)
-            })
-            // .timeout();
+                title: data.title
+              , markup: self._md.render(data.markdown)
+            });
         })
 
         /**
@@ -220,6 +194,9 @@ var GhPreview = function(port) {
 
 /**
  * Add a socket receiving the stream of `Output`.
+ *
+ * @param {Socket} socket
+ * The socket to push output to.
  */
 GhPreview.prototype._addOutput = function(socket) {
 
@@ -230,16 +207,13 @@ GhPreview.prototype._addOutput = function(socket) {
     self._outputters.push(socket);
 
     self._output.subscribe(function(data) {
-        socket.emit('data', data)
+        socket.emit('data', data);
     });
 
     Rx.Observable.fromEvent(socket, 'close')
         .take(1)
         .tap(function() {
-            self._logger.info(
-                  'Lost outputter'
-                , socket.id
-            );
+            self._logger.info('Lost outputter', socket.id);
         })
         .where(_.partial(_.contains, self._outputters, socket))
         .map(_.partial(_.without, self._outputters, socket))
@@ -251,20 +225,26 @@ GhPreview.prototype._addOutput = function(socket) {
 
 /**
  * Add a socket emitting a stream of `Input`.
+ * Will close all previous 'inputting' sockets.
+ *
+ * @param {Socket} socket
+ * The socket to receive input from.
  */
 GhPreview.prototype._setInput = function(socket) {
+
+    var self = this;
 
     self._logger.info('Adding inputter...');
 
     if (self._inputter !== null) {
+        self._logger.warn('Removing current inputter.');
         self._inputter.close();
     }
+
     self._inputter = socket;
 
     socket.on('close', function() {
-
         self._logger.info('Lost inputter...');
-
         if (self._inputter === socket) {
             self._inputter = null;
         }
@@ -277,7 +257,9 @@ GhPreview.prototype._setInput = function(socket) {
 
 /**
  * Opaque constructor for `GhPreview`.
- * > See `GhPreview` for docs.
+ *
+ * @param {Number} port
+ * The port to listen on.
  */
 module.exports.start = function (port) {
     return new GhPreview(port);
