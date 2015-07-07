@@ -1,4 +1,5 @@
 import os
+import signal
 import time
 import Queue
 import httplib
