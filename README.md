@@ -48,6 +48,9 @@ Vim can be configured to
 " Should the server start automatically when editing markdown files?
 let g:ghp_start_server = 1
 
+" Should the browser page be opened automatically?
+let g:ghp_open_browser = 1
+
 " The port to listen on / start `gh-preview` at
 let g:ghp_port = 1234
 ```

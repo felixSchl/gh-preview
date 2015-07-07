@@ -20,6 +20,9 @@ let g:ghp_port = get(g:, 'ghp_port', 1234)
 " Start the server automatically?
 let g:ghp_start_server = get(g:, 'ghp_start_server', 1)
 
+" Open the browser automatically?
+let g:ghp_open_browser = get(g:, 'ghp_open_browser', 1)
+
 " Perform disposal logic
 fu! s:dispose()
     call Ghp#Stop()

@@ -1,3 +1,4 @@
+import os
 import time
 import Queue
 import httplib
@@ -27,17 +28,28 @@ def terminate_process(pid):
         os.kill(pid, signal.SIGKILL)
 
 
+def start_browser(url):
+    print(url)
+    command =\
+         'open -g'  if sys.platform.startswith('darwin')\
+    else 'start'    if sys.platform.startswith('win')\
+    else 'xdg-open'
+    os.system(command + ' ' + url)
 
-def push(stop_event, port, auto_start_server):
+
+def push(stop_event, port, auto_open_browser, auto_start_server):
     global ghp_process
     process_failed = False
+    browser_opened = False
     while(not stop_event.is_set()):
+        success = False
         data = ghp_queue.get()
 
         connection = httplib.HTTPConnection('localhost', port, timeout=1)
         try:
             connection.request('POST', '/input', data)
             connection.close()
+            success = True
         except (socket.error, socket.timeout, httplib.HTTPException):
             if not ghp_process \
                and not process_failed \
@@ -60,10 +72,15 @@ def push(stop_event, port, auto_start_server):
                       , stdout = pipe
                       , stderr = pipe
                     )
+                    success = True
                 except Exception, e:
                     process_failed = True
         except Exception, e:
             print(type(e))
+
+        if success and not browser_opened:
+            browser_opened = True
+            start_browser('http://localhost:' + port)
 
         ghp_queue.task_done()
     if ghp_process is not None:
@@ -114,6 +131,7 @@ def start():
     ghp_t = threading.Thread(target=push, args=(
         ghp_t_stop
       , vim.eval("g:ghp_port")
+      , vim.eval("g:ghp_open_browser")
       , vim.eval("g:ghp_start_server")
     ))
     ghp_t.start()
