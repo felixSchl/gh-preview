@@ -8,6 +8,14 @@ import vim
 import sys
 import socket
 
+
+ghp_process = None
+ghp_t = None
+ghp_t_stop = None
+ghp_started = False
+ghp_queue = Queue.Queue(1)
+
+
 def terminate_process(pid):
     if sys.platform == 'win32':
         import ctypes
@@ -19,14 +27,9 @@ def terminate_process(pid):
         os.kill(pid, signal.SIGKILL)
 
 
-ghp_process = None
-ghp_t = None
-ghp_t_stop = None
-ghp_started = False
-ghp_queue = Queue.Queue(1)
 
 def push(stop_event, port, auto_start_server):
-    ghp_process = None
+    global ghp_process
     process_failed = False
     while(not stop_event.is_set()):
         data = ghp_queue.get()
@@ -67,6 +70,7 @@ def push(stop_event, port, auto_start_server):
         terminate_process(ghp_process.pid)
 
 def preview():
+    global ghp_queue
     try:
         ghp_queue.put(
             json.dumps({
@@ -83,6 +87,7 @@ def stop():
     global ghp_t
     global ghp_t_stop
     global ghp_started
+    global ghp_process
 
     if not ghp_started:
         return
@@ -99,6 +104,7 @@ def start():
     global ghp_t
     global ghp_t_stop
     global ghp_started
+    global ghp_process
 
     if ghp_started:
         return
