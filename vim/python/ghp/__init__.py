@@ -29,13 +29,18 @@ def push(stop_event, port, auto_start_server):
                     command = "gh-preview.cmd"
                     startupinfo = subprocess.STARTUPINFO()
                     startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    pipe = None
                 else:
                     command = "gh-preview"
+                    pipe = subprocess.PIPE
                 try:
                     process = subprocess.Popen(
                         [command, port]
                       , bufsize = 0
                       , startupinfo = startupinfo
+                      , stdin = pipe
+                      , stdout = pipe
+                      , stderr = pipe
                     )
                 except Exception, e:
                     process_failed = True
