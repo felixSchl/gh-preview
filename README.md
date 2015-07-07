@@ -3,46 +3,54 @@
 > Preview Github markdown - as you type
 
 The most exciting part in a project's lifetime is bragging about how awesome it
-is, usually in it's _Readme_ file.  However, to get the wording and formatting
+is, usually in it's __README__ file.  However, to get the wording and formatting
 just right, one would need to write the file using Github's online editor,
 switching back and forth between editing and previewing, loosing all the
 efficiencies of using a copy of the vim text editor.
 
-**Features**:
+##### Features
+
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
-* [Editor-friendly](#test)
+* Editor-friendly - Vim plugin included
 
-Uses [marked](https://www.npmjs.com/package/marked) for markdown rendering, and
-[highlight.js](https://highlightjs.org/) for syntax highlighting. The server is
-an [express](https://www.npmjs.com/package/express) app and accepts
-[socket.io](https://www.npmjs.com/package/socket.io) socket connections.
+##### Built with:
+
+* [marked](https://www.npmjs.com/package/marked) for markdown rendering
+* [highlight.js](https://highlightjs.org/) for syntax highlighting
+* [express](https://www.npmjs.com/package/express) for the server
+* [socket.io](https://www.npmjs.com/package/socket.io) for socket connections
 
 ## Getting started
 
-The server is running on [node](http://nodejs.org/) which is a heavy dependency
-to add, as I am aware. If you are still keen, download the node platform and
-run:
+The server is running on [node](http://nodejs.org/) and requires npm to install:
 
 ```sh
 $ npm install -g gh-preview
 ```
 
+To run the server manually, use the `gh-preview` command.
+Note that the vim plugin will start the server automatically if it is not
+already running at the given port.
+
 ```sh
-$ gh-preview --help
-
-Usage: gh-preview <port>
-
-Starts a `gh-preview` server at <port>.
-
-`GET` the rendered output:
-    Visit "http://localhost:<port>" in your browser
-
-`POST` some markdown to "/input":
-    POST /input { title: String, content: String }
+$ Usage:
+$ gh-preview --help | <port>
 ```
 
 ## Editor integration - VIM
+
+Vim can be configured to 
+
+#### Options
+
+```vim
+" Should the server start automatically when editing markdown files?
+let g:ghp_start_server = 1
+
+" The port to listen on / start `gh-preview` at
+let g:ghp_port = 1234
+```
 
 #### Installation - Plugged.vim
 
@@ -54,18 +62,6 @@ Plug 'felixschl/gh-preview', { 'rtp': 'vim/' }
 
 ```vim
 Plugin 'felixschl/gh-preview', { 'rtp': 'vim/' }
-```
-
-#### Options
-
-These optional settings go into your `.vimrc` if requried:
-
-```vim
-" Start automatically when editing markdown files. (Default: 1)
-let g:ghPreview_autoStart=1
-
-" Run server at the given port. (Default: 1234)
-let g:ghPreview_port=1234
 ```
 
 ## Caveats
