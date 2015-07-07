@@ -8,20 +8,35 @@ import vim
 import sys
 import socket
 
-queue = Queue.Queue(1)
+def terminate_process(pid):
+    if sys.platform == 'win32':
+        import ctypes
+        PROCESS_TERMINATE = 1
+        handle = ctypes.windll.kernel32.OpenProcess(PROCESS_TERMINATE, False, pid)
+        ctypes.windll.kernel32.TerminateProcess(handle, -1)
+        ctypes.windll.kernel32.CloseHandle(handle)
+    else:
+        os.kill(pid, signal.SIGKILL)
+
+
+ghp_process = None
+ghp_t = None
+ghp_t_stop = None
+ghp_started = False
+ghp_queue = Queue.Queue(1)
 
 def push(stop_event, port, auto_start_server):
-    process = None
+    ghp_process = None
     process_failed = False
     while(not stop_event.is_set()):
-        data = queue.get()
+        data = ghp_queue.get()
 
         connection = httplib.HTTPConnection('localhost', port, timeout=1)
         try:
             connection.request('POST', '/input', data)
             connection.close()
         except (socket.error, socket.timeout, httplib.HTTPException):
-            if not process \
+            if not ghp_process \
                and not process_failed \
                and auto_start_server:
                 startupinfo = None
@@ -34,7 +49,7 @@ def push(stop_event, port, auto_start_server):
                     command = "gh-preview"
                     pipe = subprocess.PIPE
                 try:
-                    process = subprocess.Popen(
+                    ghp_process = subprocess.Popen(
                         [command, port]
                       , bufsize = 0
                       , startupinfo = startupinfo
@@ -47,13 +62,13 @@ def push(stop_event, port, auto_start_server):
         except Exception, e:
             print(type(e))
 
-        queue.task_done()
-    if process is not None:
-        process.kill()
+        ghp_queue.task_done()
+    if ghp_process is not None:
+        terminate_process(ghp_process.pid)
 
 def preview():
     try:
-        queue.put(
+        ghp_queue.put(
             json.dumps({
                 'file': vim.current.buffer.name
               , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
@@ -62,10 +77,6 @@ def preview():
         )
     except:
         pass
-
-ghp_t = None
-ghp_t_stop = None
-ghp_started = False
 
 def stop():
 
@@ -79,6 +90,9 @@ def stop():
 
     ghp_t_stop.set()
     ghp_t._Thread__stop()
+
+    if ghp_process is not None:
+        terminate_process(ghp_process.pid)
 
 def start():
 
