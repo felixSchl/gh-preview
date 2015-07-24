@@ -1,5 +1,7 @@
 # Github Markdown Preview
 
+[![npm version](https://badge.fury.io/js/gh-preview.svg)](http://badge.fury.io/js/gh-preview)
+
 > Preview Github markdown - as you type
 
 The most exciting part in a project's lifetime is bragging about how awesome it
@@ -20,6 +22,8 @@ efficiencies of using a copy of the vim text editor.
 * [highlight.js](https://highlightjs.org/) for syntax highlighting
 * [express](https://www.npmjs.com/package/express) for the server
 * [socket.io](https://www.npmjs.com/package/socket.io) for socket connections
+
+> Note: There are more dependencies, check package.json and bower.json.
 
 ## Getting started
 
