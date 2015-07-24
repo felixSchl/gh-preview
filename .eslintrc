@@ -15,7 +15,7 @@
     "comma-style": [2, "first"],
     "consistent-return": 0,
     "eol-last": 1,
-    "indent": [1, 4],
+    "indent": [1, 2],
     "no-use-before-define": [2, "nofunc"],
     "no-process-exit": 0,
     "no-trailing-spaces": 1,

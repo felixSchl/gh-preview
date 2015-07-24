@@ -1,2 +1,6 @@
 *.sw[mnopqrstuvwxyz]
 *.un~
+*.pyc
+node_modules
+client/vendor
+client/app.js

@@ -1,6 +1,10 @@
 # Github Markdown Preview
 
+[![npm version](https://badge.fury.io/js/gh-preview.svg)](http://badge.fury.io/js/gh-preview)
+
 > Preview Github markdown - as you type
+
+![preview](https://raw.githubusercontent.com/felixSchl/felixSchl.github.io/master/gh-preview/preview.gif)
 
 The most exciting part in a project's lifetime is bragging about how awesome it
 is, usually in it's __README__ file.  However, to get the wording and formatting
@@ -16,10 +20,12 @@ efficiencies of using a copy of the vim text editor.
 
 ##### Built with:
 
-* [marked](https://www.npmjs.com/package/marked) for markdown rendering
+* [markdown-it](https://www.npmjs.com/package/markdown-it) for markdown rendering
 * [highlight.js](https://highlightjs.org/) for syntax highlighting
 * [express](https://www.npmjs.com/package/express) for the server
 * [socket.io](https://www.npmjs.com/package/socket.io) for socket connections
+
+> Note: There are more dependencies, check package.json and bower.json.
 
 ## Getting started
 
@@ -39,8 +45,6 @@ $ gh-preview --help | <port>
 ```
 
 ## Editor integration - VIM
-
-Vim can be configured to 
 
 #### Options
 
@@ -82,8 +86,6 @@ likely to remain wishes for the future to come.
 
 * Show the caret in the output
 * Synchronize scrolling
-* Preview changes
-* Theme for bitbucket projects
 * Anchor tag support for permalinks in headings
 * Implement `:GhPreviewOpenBrowser` command for vim
 * Implement `:GhPreviewStart` command for vim

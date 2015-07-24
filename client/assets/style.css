@@ -1,0 +1,8 @@
+#readme {
+margin: 50px auto;
+width: 790px;
+}
+
+label[for^='checkbox'] {
+    padding-left: 10px;
+}
