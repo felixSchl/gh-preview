@@ -22,5 +22,8 @@
     "react": "~0.13.3",
     "rxjs": "~2.5.2",
     "socket.io-client": "~1.3.6"
+  },
+  "devDependencies": {
+    "markdown-it-emoji": "~1.0.0"
   }
 }

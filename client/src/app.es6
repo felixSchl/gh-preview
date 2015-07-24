@@ -3,7 +3,8 @@
 import React from 'react'
 import Rx from 'rxjs'
 import Promise from 'bluebird'
-import MarkdownIt from 'markdownit'
+import MarkdownIt from 'markdown-it'
+import Emoj from 'markdown-it-emoj'
 import Highlight from 'highlightjs'
 import IO from 'socket.io'
 
@@ -24,6 +25,11 @@ var md = MarkdownIt({
 , typographer: false
 , tables: true
 });
+
+/*
+ * Enable emoji
+ */
+md.use(Emoj);
 
 /*
  * Render a markdown document.
