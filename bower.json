@@ -24,6 +24,7 @@
     "socket.io-client": "~1.3.6"
   },
   "devDependencies": {
-    "markdown-it-emoji": "~1.0.0"
+    "markdown-it-emoji": "~1.0.0",
+    "markdown-it-checkbox": "git@github.com:mcecot/markdown-it-checkbox#v1.1.0"
   }
 }

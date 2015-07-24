@@ -5,6 +5,7 @@ import Rx from 'rxjs'
 import Promise from 'bluebird'
 import MarkdownIt from 'markdown-it'
 import Emoj from 'markdown-it-emoj'
+import Checkbox from 'markdown-it-checkbox'
 import Highlight from 'highlightjs'
 import IO from 'socket.io'
 
@@ -30,6 +31,11 @@ var md = MarkdownIt({
  * Enable emoji
  */
 md.use(Emoj);
+
+/*
+ * Enable task lists
+ */
+md.use(Checkbox);
 
 /*
  * Render a markdown document.
