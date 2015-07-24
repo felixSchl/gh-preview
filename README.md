@@ -4,6 +4,8 @@
 
 > Preview Github markdown - as you type
 
+![preview](https://raw.githubusercontent.com/felixSchl/felixSchl.github.io/master/gh-preview/preview.gif)
+
 The most exciting part in a project's lifetime is bragging about how awesome it
 is, usually in it's __README__ file.  However, to get the wording and formatting
 just right, one would need to write the file using Github's online editor,
