@@ -3,3 +3,4 @@
 *.pyc
 node_modules
 client/vendor
+client/app.js

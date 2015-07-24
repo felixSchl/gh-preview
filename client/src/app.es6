@@ -40,8 +40,12 @@ var socket = IO(window.location.href, {
     , query: 'type=output' })
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'data')
   , onDocumentChanged = onSourceChanged
-      .flatMapLatest(({ markdown }) => {
-        return Rx.Observable.fromPromise(render(markdown));
+      .flatMapLatest(({ markdown, title }) => {
+        return Rx.Observable.fromPromise(render(markdown))
+            .map((markup) => { return {
+                title: title
+              , markup: markup
+            }})
       });
 
 /*
@@ -53,24 +57,13 @@ class Preview extends React.Component {
   constructor (props) {
     super(props);
 
-    /* Update preview */
-    var activePromise = null;
-    props.onDocumentChanged.subscribe((markdown) => {
-
-      /* Cancel pending request */
-      if (activePromise !== null
-       && activePromise.isFulfilled()) {
-         activePromise.cancel();
-       }
-
-       /* Issue new request */
-      activePromise = render(markdown)
-        .then((markup) => {
-          this.setState(() => {
-            return { markup: markup }
-          });
-        })
-        .cancellable();
+    props.onDocumentChanged.subscribe(({ markup, title }) => {
+        this.setState(() => {
+          return {
+              title: title
+            , markup: markup
+          };
+        });
     });
 
     this.state = {
