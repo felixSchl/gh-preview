@@ -16,7 +16,7 @@ efficiencies of using a copy of the vim text editor.
 
 ##### Built with:
 
-* [marked](https://www.npmjs.com/package/marked) for markdown rendering
+* [markdown-it](https://www.npmjs.com/package/markdown-it) for markdown rendering
 * [highlight.js](https://highlightjs.org/) for syntax highlighting
 * [express](https://www.npmjs.com/package/express) for the server
 * [socket.io](https://www.npmjs.com/package/socket.io) for socket connections
