@@ -1,3 +1,8 @@
 *.sw[mnopqrstuvwxyz]
+*.pyc
 *.un~
-vim
+node_modules/
+client/vendor/
+client/src/
+vim/
+bower.json
