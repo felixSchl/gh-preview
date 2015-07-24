@@ -82,8 +82,6 @@ likely to remain wishes for the future to come.
 
 * Show the caret in the output
 * Synchronize scrolling
-* Preview changes
-* Theme for bitbucket projects
 * Anchor tag support for permalinks in headings
 * Implement `:GhPreviewOpenBrowser` command for vim
 * Implement `:GhPreviewStart` command for vim
