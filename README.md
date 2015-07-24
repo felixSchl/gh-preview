@@ -44,8 +44,6 @@ $ gh-preview --help | <port>
 
 ## Editor integration - VIM
 
-Vim can be configured to 
-
 #### Options
 
 ```vim
