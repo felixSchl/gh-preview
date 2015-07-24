@@ -3,14 +3,14 @@
 import React from 'react'
 import Rx from 'rxjs'
 import Promise from 'bluebird'
-import Remarkable from 'remarkable'
+import MarkdownIt from 'markdownit'
 import Highlight from 'highlightjs'
 import IO from 'socket.io'
 
 /*
  * Set up markdown renderer.
  */
-var md = new Remarkable({
+var md = MarkdownIt({
   highlight: function (str, lang) {
     if (lang && Highlight.getLanguage(lang)) {
       try {
