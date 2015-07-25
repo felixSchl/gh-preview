@@ -92,13 +92,16 @@ def preview():
 
     # Calculate the line
     scroll_offset = 10
+    lines = len(vim.current.buffer)
     (line, _) = vim.current.window.cursor
     first_line = int(vim.eval('line("w0")'))
     last_line = int(vim.eval('line("w$")'))
     if (last_line - first_line) > scroll_offset:
-        if (line - first_line) < scroll_offset:
+        if (line - first_line) < scroll_offset and \
+           (first_line > scroll_offset):
             line = first_line + scroll_offset
-        elif (last_line - line) < scroll_offset:
+        elif (last_line - line) < scroll_offset and \
+             (last_line < lines - scroll_offset):
             line = last_line - scroll_offset
 
     try:
@@ -107,7 +110,7 @@ def preview():
                 'file': vim.current.buffer.name
               , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
               , 'cursor': line
-              , 'lines': len(vim.current.buffer)
+              , 'lines': lines
             })
           , block = False
         )
