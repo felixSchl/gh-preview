@@ -89,11 +89,25 @@ def push(stop_event, port, auto_open_browser, auto_start_server):
 
 def preview():
     global ghp_queue
+
+    # Calculate the line
+    scroll_offset = 10
+    (line, _) = vim.current.window.cursor
+    first_line = int(vim.eval('line("w0")'))
+    last_line = int(vim.eval('line("w$")'))
+    if (last_line - first_line) > scroll_offset:
+        if (line - first_line) < scroll_offset:
+            line = first_line + scroll_offset
+        elif (last_line - line) < scroll_offset:
+            line = last_line - scroll_offset
+
     try:
         ghp_queue.put(
             json.dumps({
                 'file': vim.current.buffer.name
               , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
+              , 'cursor': cursor
+              , 'lines': len(vim.current.buffer)
             })
           , block = False
         )

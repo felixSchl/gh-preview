@@ -8,6 +8,7 @@ import Emoj from 'markdown-it-emoj'
 import Checkbox from 'markdown-it-checkbox'
 import Highlight from 'highlightjs'
 import IO from 'socket.io'
+import { scrollToY } from './animate.es6'
 
 /*
  * Set up markdown renderer.
@@ -52,10 +53,11 @@ var socket = IO(window.location.href, {
     , query: 'type=output' })
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'data')
   , onDocumentChanged = onSourceChanged
-      .flatMapLatest(({ markdown, title }) => {
-        return Rx.Observable.fromPromise(render(markdown))
+      .flatMapLatest((doc) => {
+        return Rx.Observable.fromPromise(render(doc.markdown))
             .map((markup) => { return {
-                title: title
+                title: doc.title
+              , offset: ((1/(doc.lines || 1)) * doc.cursor)
               , markup: markup
             }})
       });
@@ -69,11 +71,14 @@ class Preview extends React.Component {
   constructor (props) {
     super(props);
 
-    props.onDocumentChanged.subscribe(({ markup, title }) => {
+    props.onDocumentChanged.subscribe(({ markup, title, offset }) => {
         this.setState(() => {
+          let height = React.findDOMNode(this.refs.wrapper).offsetHeight
+            , position = height * offset;
           return {
               title: title
             , markup: markup
+            , position: position
           };
         });
     });
@@ -81,7 +86,12 @@ class Preview extends React.Component {
     this.state = {
       title: 'README.md'
     , markup: 'connecting...'
+    , position: 0
     };
+  }
+
+  componentDidUpdate () {
+    scrollToY(this.state.position, 2000, 'linear');
   }
 
   render () {
@@ -94,8 +104,14 @@ class Preview extends React.Component {
             <span className='title'>{ this.state.title }</span>
           </h3>
           <article id='content'
-            className='markdown-body entry-content'>
+            ref={'wrapper'}
+            className='markdown-body entry-content'
+            style={{ position: 'relative' }}>
             <div dangerouslySetInnerHTML={{ __html: this.state.markup }}/>
+            <div
+              ref={'scoller'}
+              style={{ position: 'absolute', top: this.state.position }}>
+            </div>
           </article>
         </div>
       </div>
