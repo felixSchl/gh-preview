@@ -106,7 +106,7 @@ def preview():
             json.dumps({
                 'file': vim.current.buffer.name
               , 'markdown': '\n'.join(vim.current.buffer).decode('utf-8')
-              , 'cursor': cursor
+              , 'cursor': line
               , 'lines': len(vim.current.buffer)
             })
           , block = False
