@@ -54,7 +54,9 @@ var socket = IO(window.location.href, {
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'data')
   , onDocumentChanged = onSourceChanged
       .flatMapLatest((doc) => {
-        return Rx.Observable.fromPromise(render(doc.markdown))
+        return (!doc.markdown)
+          ? Rx.Observable.empty()
+          : Rx.Observable.fromPromise(render(doc.markdown))
             .map((markup) => { return {
                 title: doc.title
               , offset: ((1/(doc.lines || 1)) * doc.cursor)
