@@ -71,6 +71,13 @@ Plug 'felixschl/gh-preview', { 'rtp': 'vim/' }
 Plugin 'felixschl/gh-preview', { 'rtp': 'vim/' }
 ```
 
+## What's new?
+
+##### version 0.2.2
+
+* Add scroll synchronization between vim and preview, inspired by
+  [Ghost](https://ghost.org/).
+
 ## Caveats
 
 Github uses [pygments](http://pygments.org/) for their syntax highlighting,
@@ -85,7 +92,6 @@ focused and hence the following items, albeit relatively simple tasks, are
 likely to remain wishes for the future to come.
 
 * Show the caret in the output
-* Synchronize scrolling
 * Anchor tag support for permalinks in headings
 * Implement `:GhPreviewOpenBrowser` command for vim
 * Implement `:GhPreviewStart` command for vim
