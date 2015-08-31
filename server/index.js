@@ -1,5 +1,6 @@
 import express from 'express';
 import _ from 'lodash';
+import path from 'path';
 import http from 'http';
 import Rx from 'rx';
 import woody from 'woody';
@@ -19,19 +20,68 @@ export default class Server {
     this._docs = {};
 
     this._app = express()
+
+      .set('views', path.join(__dirname, '..', 'client'))
+      .set('view engine', 'jade')
+      .use(express.static(path.join(__dirname, '..', 'client')))
+
       .use(bodyParser.json())
+
+      /**
+       * Log all HTTP traffic
+       */
+
       .use((req, _, next) => {
         logger.fork(req.method).debug(req.path);
         next(null);
       })
-      .get('/doc/:file', (req, res) => {
+
+      /**
+       * Render the output page.
+       * The page is responsible for fetching
+       * the output itself.
+       */
+
+      .get('/', (req, res) => {
+        res.render('index.jade');
+      })
+
+      /**
+       * Fetch a given doucment.
+       *
+       * @param {string} req.params.file
+       * The name of the file to retrieve.
+       *
+       * @returns {Document}
+       * The document, or Http404 if not found.
+       */
+      .get('/api/doc/:file', (req, res) => {
         if (_.has(this._docs, req.params.file)) {
           return res.json(this._docs[req.params.file]);
         } else {
           return res.sendStatus(404);
         }
       })
-      .post('/doc', (req, res) => {
+
+      /**
+       * Fetch a given doucment.
+       *
+       * @param {String} req.body.file
+       * The name of the file to store.
+       *
+       * @param {String} req.body.markdown
+       * The markdown to save for the file.
+       *
+       * @param {Number} req.body.lines
+       * The total number of lines of the document.
+       *
+       * @param {Number} req.body.cursor
+       * The cursor position (line number) of the editor.
+       *
+       * @returns {Number}
+       * Http201 on successful creation.
+       */
+      .post('/api/doc', (req, res) => {
         this._docs[req.body.file] = {
           file: req.body.file
         , markdown: req.body.markdown
@@ -40,8 +90,6 @@ export default class Server {
         };
         return res.sendStatus(201);
       });
-
-    this._io
   }
 
   /**

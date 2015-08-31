@@ -36,7 +36,7 @@ describe('The Github preview server', () => {
      * Try get non-existing document `foo.md`, should 404
      */
 
-    [res] = yield request.getAsync(route('/doc/foo.md'));
+    [res] = yield request.getAsync(route('/api/doc/foo.md'));
     assert.strictEqual(res.statusCode, 404);
 
     /*
@@ -44,7 +44,7 @@ describe('The Github preview server', () => {
      */
 
     [res] = yield request.postAsync({
-      url: route('/doc')
+      url: route('/api/doc')
     , json: {
         'file': 'foo.md'
       , 'markdown': '# Foo!'
@@ -56,7 +56,7 @@ describe('The Github preview server', () => {
      * Try get non-existing document `foo.md`, should 404
      */
 
-    [res] = yield request.getAsync(route('/doc/foo.md'));
+    [res] = yield request.getAsync(route('/api/doc/foo.md'));
     let body = JSON.parse(res.body);
     assert.strictEqual(res.statusCode, 200);
     assert.strictEqual(body.file, 'foo.md');
