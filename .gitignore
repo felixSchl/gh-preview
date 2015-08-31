@@ -1,6 +1,7 @@
 *.sw[mnopqrstuvwxyz]
 *.un~
 *.pyc
+dist/
 node_modules
 client/vendor
 client/app.js
