@@ -5,6 +5,7 @@ import http from 'http';
 import Rx from 'rx';
 import woody from 'woody';
 import bodyParser from 'body-parser';
+import socketIO from 'socket.io';
 
 /**
  * The Github Preview Server
@@ -18,13 +19,13 @@ export default class Server {
     this._logger = logger;
     this._server = null;
     this._docs = {};
+    this._inputStream = new Rx.Subject();
+    this._outputStream = this._inputStream.throttleFirst(10);
 
     this._app = express()
 
       .set('views', path.join(__dirname, '..', 'client'))
       .set('view engine', 'jade')
-      .use(express.static(path.join(__dirname, '..', 'client')))
-
       .use(bodyParser.json())
 
       /**
@@ -88,8 +89,46 @@ export default class Server {
         , lines: req.body.lines
         , cursor: req.body.cursor
         };
+        this._inputStream.onNext(
+          this._docs[req.body.file]);
         return res.sendStatus(201);
       });
+
+    this._server = http.createServer(this._app);
+    this._io = socketIO(this._server);
+    this._io.on('connection', this._connect.bind(this));
+  }
+
+  /**
+   * Connect the given socketIO socket
+   *
+   * @param {Socket} socket
+   * The socket IO socket
+   *
+   * @returns {undefined}
+   */
+  _connect(socket) {
+
+    // Create a logger `fxy..a23`
+    const logger = this._logger.fork([
+      _.take(socket.id, 3).join('')
+    , '...'
+    , _.takeRight(socket.id, 3).join('')
+    ].join(''));
+
+    logger.info('Attached!');
+
+    // Pipe our output stream to document
+    // updates on the socket.
+    const sub = this._outputStream
+      .subscribe(socket.emit.bind(socket, 'document'));
+
+    // Dispose of the socket in it's entirety upon
+    // disconnect. Leave no traces; Tear down all state.
+    socket.on('disconnect', () => {
+      logger.warn('Detached!');
+      sub.dispose();
+    });
   }
 
   /**
@@ -102,13 +141,9 @@ export default class Server {
    */
 
   listen(port) {
-    if (!this._server) {
-      this._logger.info(`Listening on port ${ port }...`);
-      this._server = http.createServer(this._app);
-      this._server.listen(port);
-    }
+    this._logger.info(`Listening on port ${ port }...`);
+    this._server.listen(port);
   }
-
 
   /**
    * Stop the HTTP server.
@@ -117,10 +152,7 @@ export default class Server {
    */
 
   stop() {
-    if (this._server) {
-      this._logger.warn('Stopping...');
-      this._server.close();
-      this._server = null;
-    }
+    this._logger.warn('Stopping...');
+    this._server.close();
   }
 }
