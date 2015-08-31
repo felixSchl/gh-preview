@@ -8,12 +8,12 @@ import Emoj from 'markdown-it-emoj'
 import Checkbox from 'markdown-it-checkbox'
 import Highlight from 'highlightjs'
 import IO from 'socket.io'
-import { scrollToY } from './animate.es6'
+import { scrollToY } from './animate'
 
 /*
  * Set up markdown renderer.
  */
-var md = MarkdownIt({
+const md = MarkdownIt({
   highlight: function (str, lang) {
     if (lang && Highlight.getLanguage(lang)) {
       try {
@@ -41,28 +41,25 @@ md.use(Checkbox);
 /*
  * Render a markdown document.
  */
-var render = (markdown) => {
-  return Promise.resolve(md.render(markdown));
-};
+const render = markdown => Promise.resolve(md.render(markdown));
 
 /*
  * A stream of `Document`s.
  */
-var socket = IO(window.location.href, {
+const socket = IO(window.location.href, {
       forceNew: true
     , query: 'type=output' })
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'data')
   , onDocumentChanged = onSourceChanged
-      .flatMapLatest((doc) => {
-        return (!doc.markdown)
+      .flatMapLatest((doc) =>
+        ((!doc.markdown)
           ? Rx.Observable.empty()
           : Rx.Observable.fromPromise(render(doc.markdown))
-            .map((markup) => { return {
-                title: doc.title
-              , offset: ((1/(doc.lines || 1)) * doc.cursor)
-              , markup: markup
-            }})
-      });
+            .map((markup) => ({
+              title: doc.title
+            , offset: ((1/(doc.lines || 1)) * doc.cursor)
+            , markup: markup
+            }))));
 
 /*
  * The <Preview/> component renders
@@ -73,23 +70,22 @@ class Preview extends React.Component {
   constructor (props) {
     super(props);
 
+    // Propagate document changes to the UI
     props.onDocumentChanged.subscribe(({ markup, title, offset }) => {
-        this.setState(() => {
-          let height = React.findDOMNode(this.refs.wrapper).offsetHeight
+      this.setState(() => {
+        const height = React.findDOMNode(this.refs.wrapper).offsetHeight
             , position = height * offset;
-          return {
-              title: title
-            , markup: markup
-            , position: position
-          };
-        });
+        return {
+          title: title
+        , markup: markup
+        , position: position };
+      });
     });
 
     this.state = {
       title: 'README.md'
     , markup: 'connecting...'
-    , position: 0
-    };
+    , position: 0 };
   }
 
   componentDidUpdate () {
@@ -111,7 +107,6 @@ class Preview extends React.Component {
             style={{ position: 'relative' }}>
             <div dangerouslySetInnerHTML={{ __html: this.state.markup }}/>
             <div
-              ref={'scoller'}
               style={{ position: 'absolute', top: this.state.position }}>
             </div>
           </article>
