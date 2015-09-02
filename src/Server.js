@@ -1,11 +1,12 @@
-import express from 'express';
+import Rx from 'rx';
 import _ from 'lodash';
 import path from 'path';
 import http from 'http';
-import Rx from 'rx';
 import woody from 'woody';
-import bodyParser from 'body-parser';
+import assert from 'assert';
+import express from 'express';
 import socketIO from 'socket.io';
+import bodyParser from 'body-parser';
 
 /**
  * The Github Preview Server
@@ -84,6 +85,14 @@ export default class Server {
        * Http201 on successful creation.
        */
       .post('/api/doc/', (req, res) => {
+
+        try {
+          assert(req.body.file);
+          assert(req.body.markdown);
+        } catch(e) {
+          logger.error(e);
+          return res.sendStatus(500);
+        }
 
         if (_.has(this._docs, req.body.file)) {
           logger.info('Updating document...', req.body.file);
