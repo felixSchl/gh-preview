@@ -26,6 +26,7 @@ export default class Server {
 
       .set('views', path.join(__dirname, '..', 'client'))
       .set('view engine', 'jade')
+      .use(express.static(path.join(__dirname, '..', 'client')))
       .use(bodyParser.json())
 
       /**
@@ -110,11 +111,13 @@ export default class Server {
   _connect(socket) {
 
     // Create a logger `fxy..a23`
-    const logger = this._logger.fork([
-      _.take(socket.id, 3).join('')
-    , '...'
-    , _.takeRight(socket.id, 3).join('')
-    ].join(''));
+    const logger = this._logger
+      .fork('ws')
+      .fork([
+          _.take(socket.id, 3).join('')
+        , '...'
+        , _.takeRight(socket.id, 3).join('')
+      ].join(''));
 
     logger.info('Attached!');
 
