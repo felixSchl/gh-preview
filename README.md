@@ -16,7 +16,7 @@ efficiencies of using a copy of the vim text editor.
 
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
-* Editor-friendly - Vim plugin included
+* [Editor-friendly](#editor-support)
 
 ## Getting started
 
