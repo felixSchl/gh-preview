@@ -40,9 +40,10 @@ describe('The Github preview server', () => {
 
     // Create document `foo.md`
     [res] = yield request.postAsync({
-      url: route('/api/doc/foo.md')
+      url: route('/api/doc')
     , json: {
-        'markdown': '# Foo!'
+        'file': 'foo.md'
+      , 'markdown': '# Foo!'
       }
     });
     assert.strictEqual(res.statusCode, 201);
@@ -60,18 +61,38 @@ describe('The Github preview server', () => {
         , deferred = Bluebird.defer();
 
     // Await the update
+    var i = 0;
     socket.on('document', doc => {
       assert.strictEqual(doc.file, 'foo.md');
-      assert.strictEqual(doc.markdown, '# Foo!');
-      socket.destroy();
-      deferred.resolve({});
+      switch(i) {
+        case 0:
+          assert.strictEqual(doc.markdown, '# Foo!');
+          i = i + 1;
+          break;
+        case 1:
+          assert.strictEqual(doc.markdown, '# Bar!');
+          socket.destroy();
+          i = i + 1;
+          deferred.resolve({});
+          break;
+      }
     });
 
     // Create document `foo.md`
     [res] = yield request.postAsync({
-      url: route('/api/doc/foo.md')
+      url: route('/api/doc')
     , json: {
-        'markdown': '# Foo!'
+        'file': 'foo.md'
+      , 'markdown': '# Foo!'
+      }
+    });
+
+    // Create document `foo.md`
+    [res] = yield request.postAsync({
+      url: route('/api/doc')
+    , json: {
+        'file': 'foo.md'
+      , 'markdown': '# Bar!'
       }
     });
 

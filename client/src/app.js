@@ -59,6 +59,8 @@ const socket = IO(window.location.href, { forceNew: true })
             , markup: markup
             }))));
 
+console.log(socket);
+
 /*
  * The <Preview/> component renders
  * a bit of markdown.

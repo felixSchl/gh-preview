@@ -83,15 +83,24 @@ export default class Server {
        * @returns {Number}
        * Http201 on successful creation.
        */
-      .post('/api/doc/:file', (req, res) => {
-        this._docs[req.params.file] = {
-          file: req.params.file
-        , markdown: req.body.markdown
-        , lines: req.body.lines
-        , cursor: req.body.cursor
-        };
+      .post('/api/doc/', (req, res) => {
+
+        if (_.has(this._docs, req.body.file)) {
+          logger.info('Updating document...', req.body.file);
+        } else {
+          logger.info('Creating document...', req.body.file);
+        }
+
+        this._docs[req.body.file] = _.assign(
+          this._docs[req.body.file] || {}
+        , { file: req.body.file
+          , markdown: req.body.markdown
+          , lines: req.body.lines
+          , cursor: req.body.cursor
+          });
+
         this._inputStream.onNext(
-          this._docs[req.params.file]);
+          this._docs[req.body.file]);
         return res.sendStatus(201);
       });
 
