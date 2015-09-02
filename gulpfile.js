@@ -62,7 +62,7 @@ gulp.task('make:client', function(){
 });
 
 gulp.task('make:server', function () {
-  return gulp.src(['server/**/*.js'])
+  return gulp.src(['src/**/*.js'])
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(sourcemaps.write('.'))
@@ -76,7 +76,7 @@ gulp.task('watch:client', [ 'make:client' ], function() {
 });
 
 gulp.task('watch:server', [ 'make:server' ], function() {
-  return gulp.watch('./server/**/*.js', [ 'make:server' ]);
+  return gulp.watch('./src/**/*.js', [ 'make:server' ]);
 });
 
 gulp.task('watch', [ 'watch:client', 'watch:server' ]);

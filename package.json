@@ -13,6 +13,7 @@
   "dependencies": {
     "bluebird": "2.9.24",
     "body-parser": "^1.13.3",
+    "docoptmd": "^0.1.2",
     "ejs": "2.2.4",
     "express": "4.11.2",
     "jade": "1.9.1",

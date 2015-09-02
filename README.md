@@ -39,9 +39,12 @@ To run the server manually, use the `gh-preview` command.
 Note that the vim plugin will start the server automatically if it is not
 already running at the given port.
 
-```sh
-$ Usage:
-$ gh-preview --help | <port>
+```docopt
+Usage:
+  gh-preview [--port=<port>]
+
+Options:
+  -p, --port=<port>  The port to bind to [Default: 1234]
 ```
 
 ## Editor integration - VIM

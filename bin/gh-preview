@@ -1,3 +1,3 @@
 #!/usr/bin/env node
-require('../index');
-
+// :vim set filetype=javascript:
+require('../dist/cli.js');
