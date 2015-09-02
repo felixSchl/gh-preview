@@ -12,20 +12,11 @@ just right, one would need to write the file using Github's online editor,
 switching back and forth between editing and previewing, loosing all the
 efficiencies of using a copy of the vim text editor.
 
-##### Features
+## Features
 
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
 * Editor-friendly - Vim plugin included
-
-##### Built with:
-
-* [markdown-it](https://www.npmjs.com/package/markdown-it) for markdown rendering
-* [highlight.js](https://highlightjs.org/) for syntax highlighting
-* [express](https://www.npmjs.com/package/express) for the server
-* [socket.io](https://www.npmjs.com/package/socket.io) for socket connections
-
-> Note: There are more dependencies, check package.json and bower.json.
 
 ## Getting started
 
@@ -47,32 +38,10 @@ Options:
   -p, --port=<port>  The port to bind to [Default: 1234]
 ```
 
-## Editor integration - VIM
+## Editor support
 
-#### Options
+* [Vim integration](https://github.com/felixSchl/vim-gh-preview)
 
-```vim
-" Should the server start automatically when editing markdown files?
-let g:ghp_start_server = 1
-
-" Should the browser page be opened automatically?
-let g:ghp_open_browser = 1
-
-" The port to listen on / start `gh-preview` at
-let g:ghp_port = 1234
-```
-
-#### Installation - Plugged.vim
-
-```vim
-Plug 'felixschl/gh-preview', { 'rtp': 'vim/' }
-```
-
-#### Installation - Vundle.vim
-
-```vim
-Plugin 'felixschl/gh-preview', { 'rtp': 'vim/' }
-```
 
 ## What's new?
 
