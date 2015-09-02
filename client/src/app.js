@@ -46,10 +46,8 @@ const render = markdown => Promise.resolve(md.render(markdown));
 /*
  * A stream of `Document`s.
  */
-const socket = IO(window.location.href, {
-      forceNew: true
-    , query: 'type=output' })
-  , onSourceChanged = Rx.Observable.fromEvent(socket, 'data')
+const socket = IO(window.location.href, { forceNew: true })
+  , onSourceChanged = Rx.Observable.fromEvent(socket, 'document')
   , onDocumentChanged = onSourceChanged
       .flatMapLatest((doc) =>
         ((!doc.markdown)
