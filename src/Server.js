@@ -83,15 +83,15 @@ export default class Server {
        * @returns {Number}
        * Http201 on successful creation.
        */
-      .post('/api/doc', (req, res) => {
-        this._docs[req.body.file] = {
-          file: req.body.file
+      .post('/api/doc/:file', (req, res) => {
+        this._docs[req.params.file] = {
+          file: req.params.file
         , markdown: req.body.markdown
         , lines: req.body.lines
         , cursor: req.body.cursor
         };
         this._inputStream.onNext(
-          this._docs[req.body.file]);
+          this._docs[req.params.file]);
         return res.sendStatus(201);
       });
 

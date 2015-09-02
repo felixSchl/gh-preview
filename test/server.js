@@ -1,4 +1,4 @@
-import Server from '..';
+import { Server } from '..';
 import woody from 'woody';
 import _ from 'lodash';
 import request from 'request';
@@ -23,8 +23,8 @@ describe('The Github preview server', () => {
   let res, port, server, route;
   beforeEach(Bluebird.coroutine(function*() {
     res = null;
-    port = yield eportAsync()
-    server = new Server(logger.fork('server'))
+    port = yield eportAsync();
+    server = new Server(logger.fork('server'));
     route = slug => `http://localhost:${ port }${ slug }`;
     server.listen(port);
   }));
@@ -40,10 +40,9 @@ describe('The Github preview server', () => {
 
     // Create document `foo.md`
     [res] = yield request.postAsync({
-      url: route('/api/doc')
+      url: route('/api/doc/foo.md')
     , json: {
-        'file': 'foo.md'
-      , 'markdown': '# Foo!'
+        'markdown': '# Foo!'
       }
     });
     assert.strictEqual(res.statusCode, 201);
@@ -57,22 +56,22 @@ describe('The Github preview server', () => {
   }));
 
   it('serves over socket.io', Bluebird.coroutine(function*() {
-    const socket = socketIO(route('/'), { forceNew: true });
+    const socket = socketIO(route('/'), { forceNew: true })
         , deferred = Bluebird.defer();
 
     // Await the update
     socket.on('document', doc => {
       assert.strictEqual(doc.file, 'foo.md');
       assert.strictEqual(doc.markdown, '# Foo!');
+      socket.destroy();
       deferred.resolve({});
     });
 
     // Create document `foo.md`
     [res] = yield request.postAsync({
-      url: route('/api/doc')
+      url: route('/api/doc/foo.md')
     , json: {
-        'file': 'foo.md'
-      , 'markdown': '# Foo!'
+        'markdown': '# Foo!'
       }
     });
 
