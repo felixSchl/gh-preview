@@ -72,7 +72,7 @@ gulp.task('make:server', function () {
 gulp.task('make', [ 'make:client', 'make:server' ]);
 
 gulp.task('watch:client', [ 'make:client' ], function() {
-  return gulp.watch('./client/src/**/*.js', [ 'make:server' ]);
+  return gulp.watch('./client/src/**/*.js', [ 'make:client' ]);
 });
 
 gulp.task('watch:server', [ 'make:server' ], function() {
