@@ -27,10 +27,13 @@ gulp.task('make:client', function(){
       './client/vendor/react/react.js'
     , { expose: 'react' })
     .require(
-      './client/vendor/rxjs/dist/rx.all.js'
+      './client/vendor/lodash/lodash.min.js'
+    , { expose: '_' })
+    .require(
+      './client/vendor/rxjs/dist/rx.all.min.js'
     , { expose: 'rxjs' })
     .require(
-      './client/vendor/bluebird/js/browser/bluebird.js'
+      './client/vendor/bluebird/js/browser/bluebird.min.js'
     , { expose: 'bluebird' })
     .require(
       './client/vendor/markdown-it/dist/markdown-it.min.js'

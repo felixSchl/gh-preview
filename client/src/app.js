@@ -1,14 +1,15 @@
 'use strict'
 
-import React from 'react'
-import Rx from 'rxjs'
-import Promise from 'bluebird'
-import MarkdownIt from 'markdown-it'
-import Emoj from 'markdown-it-emoj'
-import Checkbox from 'markdown-it-checkbox'
-import Highlight from 'highlightjs'
-import IO from 'socket.io'
-import { scrollToY } from './animate'
+import React from 'react';
+import _ from 'lodash';
+import Rx from 'rxjs';
+import Promise from 'bluebird';
+import MarkdownIt from 'markdown-it';
+import Emoj from 'markdown-it-emoj';
+import Checkbox from 'markdown-it-checkbox';
+import Highlight from 'highlightjs';
+import IO from 'socket.io';
+import { scrollToY } from './animate';
 
 /*
  * Set up markdown renderer.
@@ -49,7 +50,7 @@ const render = markdown => Promise.resolve(md.render(markdown));
 const socket = IO(window.location.href, { forceNew: true })
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'document')
   , onDocumentChanged = onSourceChanged
-      .flatMapLatest((doc) =>
+      .flatMapLatest(doc =>
         ((!doc.markdown)
           ? Rx.Observable.empty()
           : Rx.Observable.fromPromise(render(doc.markdown))
@@ -59,11 +60,51 @@ const socket = IO(window.location.href, { forceNew: true })
             , markup: markup
             }))));
 
-/*
- * The <Preview/> component renders
- * a bit of markdown.
+/**
+ * The <Preview/> component renders a list of documents
  */
 class Preview extends React.Component {
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      documents: {}
+    };
+
+    /**
+     * Book-keep documents and route their pub/subs
+     */
+    props.onDocumentChanged.subscribe(doc => {
+      this.setState(state => {
+        if (_.has(state.documents, doc.file)) {
+          _.assign(state.documents[doc.file], doc);
+        } else {
+          state.documents[doc.file] = doc;
+        }
+        return state;
+      });
+    });
+  }
+
+  render() {
+    return (
+    <ul>
+    { _.map(this.state.documents, doc =>
+        <li>
+          <DocumentPreview
+            onDocumentChanged={ this.props.onDocumentChanged
+              .where(update => update.file === doc.file)
+            }/>
+        </li>
+    ) }
+    </ul>);
+  }
+}
+
+/**
+ * The <DocumentPreview/> component renders a single document.
+ */
+class DocumentPreview extends React.Component {
 
   constructor (props) {
     super(props);
@@ -87,12 +128,23 @@ class Preview extends React.Component {
   }
 
   componentDidUpdate () {
-    scrollToY(this.state.position, 2000, 'linear');
+    if (!this.state.locked) {
+      scrollToY(this.state.position, 2000, 'linear');
+    }
+  }
+
+  toggleLock () {
+    console.log('TODO: implement locking');
   }
 
   render () {
     return (
       <div>
+        <form action="#">
+          <button type="submit" on-click={ this.toggleLock }>
+            Lock scroll
+          </button>
+        </form>
         <div id='readme'
           className='boxed-group flush clearfix announce instapaper_body md'>
           <h3>

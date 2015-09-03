@@ -88,7 +88,6 @@ export default class Server {
 
         try {
           assert(req.body.file);
-          assert(req.body.markdown);
         } catch(e) {
           logger.error(e);
           return res.sendStatus(500);
@@ -103,9 +102,9 @@ export default class Server {
         this._docs[req.body.file] = _.assign(
           this._docs[req.body.file] || {}
         , { file: req.body.file
-          , markdown: req.body.markdown
-          , lines: req.body.lines
-          , cursor: req.body.cursor
+          , markdown: req.body.markdown || ''
+          , lines: req.body.lines || 0
+          , cursor: req.body.cursor || 0
           });
 
         this._inputStream.onNext(
@@ -128,7 +127,6 @@ export default class Server {
    */
   _connect(socket) {
 
-    // Create a logger `fxy..a23`
     const logger = this._logger
       .fork('ws')
       .fork([
@@ -136,20 +134,28 @@ export default class Server {
         , '...'
         , _.takeRight(socket.id, 3).join('')
       ].join(''));
-
     logger.info('Attached!');
 
-    // Pipe our output stream to document
-    // updates on the socket.
+    /*
+     * Pipe our output stream to document
+     * updates on the socket.
+     */
     const sub = this._outputStream
       .subscribe(socket.emit.bind(socket, 'document'));
 
-    // Dispose of the socket in it's entirety upon
-    // disconnect. Leave no traces; Tear down all state.
+    /*
+     * Dispose of the socket in it's entirety upon
+     * disconnect. Leave no traces; Tear down all state.
+     */
     socket.on('disconnect', () => {
       logger.warn('Detached!');
       sub.dispose();
     });
+
+    /*
+     * Let attached socket know about all current documents.
+     */
+    _.each(this._docs, socket.emit.bind(socket, 'document'));
   }
 
   /**
