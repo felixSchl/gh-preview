@@ -52,23 +52,6 @@ export default class Server {
       /**
        * Fetch a given doucment.
        *
-       * @param {string} req.params.file
-       * The name of the file to retrieve.
-       *
-       * @returns {Document}
-       * The document, or Http404 if not found.
-       */
-      .get('/api/doc/:file', (req, res) => {
-        if (_.has(this._docs, req.params.file)) {
-          return res.json(this._docs[req.params.file]);
-        } else {
-          return res.sendStatus(404);
-        }
-      })
-
-      /**
-       * Fetch a given doucment.
-       *
        * @param {String} req.body.file
        * The name of the file to store.
        *

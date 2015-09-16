@@ -33,29 +33,6 @@ describe('The Github preview server', () => {
     server.stop();
   }));
 
-  it('stores markdown documents', Bluebird.coroutine(function*() {
-    // Try get non-existing document `foo.md`, should 404
-    [res] = yield request.getAsync(route('/api/doc/foo.md'));
-    assert.strictEqual(res.statusCode, 404);
-
-    // Create document `foo.md`
-    [res] = yield request.postAsync({
-      url: route('/api/doc')
-    , json: {
-        'file': 'foo.md'
-      , 'markdown': '# Foo!'
-      }
-    });
-    assert.strictEqual(res.statusCode, 201);
-
-    // Try get the newly created document `foo.md`, should 200
-    [res] = yield request.getAsync(route('/api/doc/foo.md'));
-    let body = JSON.parse(res.body);
-    assert.strictEqual(res.statusCode, 200);
-    assert.strictEqual(body.file, 'foo.md');
-    assert.strictEqual(body.markdown, '# Foo!');
-  }));
-
   it('serves over socket.io', Bluebird.coroutine(function*() {
     const socket = socketIO(route('/'), { forceNew: true })
         , deferred = Bluebird.defer();
