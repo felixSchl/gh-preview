@@ -55,7 +55,7 @@ const socket = IO(window.location.href, { forceNew: true })
           ? Rx.Observable.empty()
           : Rx.Observable.fromPromise(render(doc.markdown))
               .map(markup => ({
-                title: doc.file
+                title: doc.title
               , offset: ((1/(doc.lines || 1)) * doc.cursor)
               , markup: markup
               }))));

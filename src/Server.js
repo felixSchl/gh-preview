@@ -85,6 +85,7 @@ export default class Server {
         this._docs[req.body.file] = _.assign(
           this._docs[req.body.file] || {}
         , { file: req.body.file
+          , title: path.basename(req.body.file)
           , markdown: req.body.markdown || ''
           , lines: req.body.lines || 0
           , cursor: req.body.cursor || 0
