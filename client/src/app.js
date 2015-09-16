@@ -107,33 +107,26 @@ class DocumentPreview extends React.Component {
 
   constructor (props) {
     super(props);
-  }
-
-  getInitialState () {
-    return {
-      position: 0
-    , locked: false
-    }
+    this.state = {
+      locked: false
+    };
   }
 
   componentDidMount () {
-    this.setState(state => {
-      state.position =
-        React.findDOMNode(this.refs.wrapper).offsetHeight
-          * this.props.document.offset;
-      return state;
-    });
+    this.updateScroll();
+  }
+
+  componentDidUpdate () {
     this.updateScroll();
   }
 
   updateScroll () {
     if (!this.state.locked) {
-      scrollToY(this.state.position, 2000, 'linear');
+      const position =
+        React.findDOMNode(this.refs.wrapper).offsetHeight
+          * this.props.document.offset;
+      scrollToY(position, 2000, 'linear');
     }
-  }
-
-  componentDidUpdate () {
-    this.updateScroll();
   }
 
   render () {
