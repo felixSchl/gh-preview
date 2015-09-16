@@ -54,11 +54,11 @@ const socket = IO(window.location.href, { forceNew: true })
         ((!doc.markdown)
           ? Rx.Observable.empty()
           : Rx.Observable.fromPromise(render(doc.markdown))
-            .map((markup) => ({
-              title: doc.title
-            , offset: ((1/(doc.lines || 1)) * doc.cursor)
-            , markup: markup
-            }))));
+              .map(markup => ({
+                title: doc.title
+              , offset: ((1/(doc.lines || 1)) * doc.cursor)
+              , markup: markup
+              }))));
 
 /**
  * The <Preview/> component renders a list of documents
@@ -69,6 +69,7 @@ class Preview extends React.Component {
 
     this.state = {
       documents: {}
+    , activeDocument: null
     };
 
     /**
@@ -81,6 +82,7 @@ class Preview extends React.Component {
         } else {
           state.documents[doc.file] = doc;
         }
+        state.activeDocument = doc;
         return state;
       });
     });
@@ -88,16 +90,13 @@ class Preview extends React.Component {
 
   render() {
     return (
-    <ul>
-    { _.map(this.state.documents, doc =>
-        <li>
-          <DocumentPreview
-            onDocumentChanged={ this.props.onDocumentChanged
-              .where(update => update.file === doc.file)
-            }/>
-        </li>
-    ) }
-    </ul>);
+    <div>
+      { (this.state.activeDocument)
+          ? <DocumentPreview document={ this.state.activeDocument }/>
+          : "No documents loaded yet."
+      }
+    </div>
+    );
   }
 }
 
@@ -108,54 +107,50 @@ class DocumentPreview extends React.Component {
 
   constructor (props) {
     super(props);
-
-    // Propagate document changes to the UI
-    props.onDocumentChanged.subscribe(({ markup, title, offset }) => {
-      this.setState(() => {
-        const height = React.findDOMNode(this.refs.wrapper).offsetHeight
-            , position = height * offset;
-        return {
-          title: title
-        , markup: markup
-        , position: position };
-      });
-    });
-
-    this.state = {
-      title: 'README.md'
-    , markup: 'connecting...'
-    , position: 0 };
   }
 
-  componentDidUpdate () {
+  getInitialState () {
+    return {
+      position: 0
+    , locked: false
+    }
+  }
+
+  componentDidMount () {
+    this.setState(state => {
+      state.position =
+        React.findDOMNode(this.refs.wrapper).offsetHeight
+          * this.props.document.offset;
+      return state;
+    });
+    this.updateScroll();
+  }
+
+  updateScroll () {
     if (!this.state.locked) {
       scrollToY(this.state.position, 2000, 'linear');
     }
   }
 
-  toggleLock () {
-    console.log('TODO: implement locking');
+  componentDidUpdate () {
+    this.updateScroll();
   }
 
   render () {
+    const document = this.props.document;
     return (
       <div>
-        <form action="#">
-          <button type="submit" on-click={ this.toggleLock }>
-            Lock scroll
-          </button>
-        </form>
         <div id='readme'
           className='boxed-group flush clearfix announce instapaper_body md'>
           <h3>
             <span className='octicon octicon-book'></span>
-            <span className='title'>{ this.state.title }</span>
+            <span className='title'>{ document.title }</span>
           </h3>
           <article id='content'
             ref={'wrapper'}
             className='markdown-body entry-content'
             style={{ position: 'relative' }}>
-            <div dangerouslySetInnerHTML={{ __html: this.state.markup }}/>
+            <div dangerouslySetInnerHTML={{ __html: document.markup }}/>
             <div
               style={{ position: 'absolute', top: this.state.position }}>
             </div>
