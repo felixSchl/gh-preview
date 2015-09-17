@@ -93,7 +93,7 @@ class Preview extends React.Component {
     <div>
       { (this.state.activeDocument)
           ? <DocumentPreview document={ this.state.activeDocument }/>
-          : "No documents loaded yet."
+          : <div id='connecting'>Connecting...</div>
       }
     </div>
     );

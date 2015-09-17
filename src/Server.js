@@ -8,6 +8,56 @@ import express from 'express';
 import socketIO from 'socket.io';
 import bodyParser from 'body-parser';
 
+const __SAMPLE__ = {
+  file: 'Welcome'
+, title: 'Welcome'
+, markdown:
+`
+# Welcome to gh-preview
+
+> :bulb: There are currently no documents being previewed - in order to start
+> a live preview, perform an \`HTTP POST\` to \`/api/doc/\`.
+
+## Choose your text editor plugin:
+
+* [Vim (felixschl/vim-gh-preview)](https://github.com/felixschl/vim-gh-preview)
+
+#### Where is my editor?
+
+If you have written a plugin for your favourite editor, open an issue on
+github and have it mentioned here.
+
+#### How to write an editor plugin?
+
+Simply have your editor perform \`HTTP POST\` requests to the running
+gh-preview instance. The plugin may optionally start a new gh-preview server.
+For command line usage, refer to the \`README\`.
+
+To see an example usage, check out the tests and the
+[vim plugin](https://github.com/felixschl/vim-gh-preview). From the tests:
+
+\`\`\`javascript
+yield request.postAsync({
+  url: 'localhost:1234/api/doc'
+, json: {
+    'file': '/bar/foo.md'
+  , 'markdown': '# Foo!'
+  }
+});
+\`\`\`
+
+This will create a document titled \`foo.md\`, with the markdown being
+\`# Foo!\`. The markdown will then be rendered on the client, as served by
+the \`gh-preview\` server.
+
+## Contributing
+
+Please file issues and bug reports, as well as feature request on the [github
+issue tracker](https://github.com/felixSchl/gh-preview/issues)
+`
+};
+
+
 /**
  * The Github Preview Server
  *
@@ -139,7 +189,9 @@ export default class Server {
     /*
      * Let attached socket know about all current documents.
      */
-    _.each(this._docs, socket.emit.bind(socket, 'document'));
+    _.each(
+        this._docs.length ? this._docs : [ __SAMPLE__ ]
+      , socket.emit.bind(socket, 'document'));
   }
 
   /**
