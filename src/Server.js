@@ -195,7 +195,7 @@ export default class Server {
      * Let attached socket know about all current documents.
      */
     _.each(
-        [ mkSample(this._port) ].concat(this._docs)
+        [ mkSample(this._port) ].concat(_.toArray(this._docs))
       , socket.emit.bind(socket, 'document'));
   }
 
