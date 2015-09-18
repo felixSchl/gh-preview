@@ -25,7 +25,7 @@ efficiencies of using a copy of the vim text editor.
 The server is running on [node](http://nodejs.org/) and requires npm to install:
 
 ```sh
-$ npm install -g gh-preview
+$ npm install -g gh-preview@1.0.0-next
 ```
 
 To run the server manually, use the `gh-preview` command.
