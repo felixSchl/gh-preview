@@ -23,6 +23,7 @@ describe('The Github preview server', () => {
 
   let res, port, server, route;
   beforeEach(Bluebird.coroutine(function*() {
+    this.timeout(4000);
     res = null;
     port = yield eportAsync();
     server = new Server(logger.fork('server'));
