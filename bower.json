@@ -26,6 +26,6 @@
   },
   "devDependencies": {
     "markdown-it-emoji": "~1.0.0",
-    "markdown-it-checkbox": "git@github.com:mcecot/markdown-it-checkbox#v1.1.0"
+    "markdown-it-checkbox": "https://github.com/mcecot/markdown-it-checkbox.git#v1.1.0"
   }
 }
