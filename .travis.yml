@@ -5,6 +5,7 @@ node_js:
   - "0.12"
   - "4.0"
 cache:
+  - npm
   directories:
     - $(npm config get prefix)/bin/gulp
     - $(npm config get prefix)/bin/bower
