@@ -1,6 +1,8 @@
 # Github Markdown Preview
 
 [![npm version](https://badge.fury.io/js/gh-preview.svg)](http://badge.fury.io/js/gh-preview)
+[![Build Status](https://travis-ci.org/felixSchl/gh-preview.svg?branch=next)](https://travis-ci.org/felixSchl/gh-preview)
+[![Build status](https://ci.appveyor.com/api/projects/status/vycefcrblvr9scok/branch/next?svg=true)](https://ci.appveyor.com/project/felixSchl/gh-preview/branch/next)
 
 > Preview Github markdown - as you type
 
