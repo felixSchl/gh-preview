@@ -2,7 +2,7 @@ import { Server } from '..';
 import woody from 'woody';
 import _ from 'lodash';
 import request from 'request';
-import Bluebird from 'Bluebird';
+import Bluebird from 'bluebird';
 import assert from 'assert';
 import eport from 'eport';
 import socketIO from 'socket.io-client';
