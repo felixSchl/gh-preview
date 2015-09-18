@@ -17,6 +17,8 @@ efficiencies of using a copy of the vim text editor.
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
 * [Editor-friendly](#editor-support)
+* **Since v0.2.2**: Scroll synchronization, inspired by [Ghost](https://ghost.org/).
+
 
 ## Getting started
 
@@ -38,17 +40,36 @@ Options:
   -p, --port=<port>  The port to bind to [Default: 1234]
 ```
 
-## Editor support
+## Editor integration
 
-* [Vim integration](https://github.com/felixSchl/vim-gh-preview)
+* [Vim via felixschl/vim-gh-preview](https://github.com/felixschl/vim-gh-preview)
 
+### Where is my editor?
 
-## What's new?
+If you have written a plugin for your favourite editor, open an issue on
+github and have it mentioned here.
 
-##### version 0.2.2
+### How to write an editor plugin?
 
-* Add scroll synchronization between vim and preview, inspired by
-  [Ghost](https://ghost.org/).
+Simply have your editor perform `HTTP POST` requests to the running
+gh-preview instance. The plugin may optionally start a new gh-preview server.
+For command line usage, refer to the `README`.
+
+To see an example usage, check out the tests and the
+[vim plugin](https://github.com/felixschl/vim-gh-preview). From the tests:
+
+<a name='how-to'></a>
+```javascript
+import request from 'request';
+request.post({
+  url:  'localhost:${ port }/api/doc'
+, json: { 'file': '/bar/foo.md'
+        , 'markdown': '# Foo!' }});
+```
+
+This will create a document titled `foo.md`, with the markdown being
+`# Foo!`. The markdown will then be rendered on the client, as served by
+the `gh-preview` server.
 
 ## Caveats
 
@@ -63,10 +84,25 @@ preview markdown files before publishing to github - work on this project is not
 focused and hence the following items, albeit relatively simple tasks, are
 likely to remain wishes for the future to come.
 
-* Show the caret in the output
-* Anchor tag support for permalinks in headings
-* Implement `:GhPreviewOpenBrowser` command for vim
-* Implement `:GhPreviewStart` command for vim
-* Implement `:GhPreviewStop` command for vim
-* Improve error reporting if the server goes away, etc.
-* Use `forever` if installed
+* [ ] Show the caret in the output
+* [ ] Anchor tag support for permalinks in headings
+* [ ] Implement `:GhPreviewOpenBrowser` command for vim
+* [ ] Implement `:GhPreviewStart` command for vim
+* [ ] Implement `:GhPreviewStop` command for vim
+* [ ] Improve error reporting if the server goes away, etc.
+* [ ] Improve scroll synchronization
+
+## Contributing
+
+Business as usual. Get started by running the test suite:
+
+```
+git clone git@github.com:felixschl/gh-preview
+cd gh-preview
+npm install -g gulp
+npm install
+gulp
+npm test
+```
+
+Then fix bug / add feature and submit a pull request.
