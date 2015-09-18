@@ -5,6 +5,7 @@ import request from 'request';
 import Bluebird from 'bluebird';
 import assert from 'assert';
 import eport from 'eport';
+import { expect } from 'chai';
 import socketIO from 'socket.io-client';
 
 Bluebird.promisifyAll(request);
@@ -40,17 +41,26 @@ describe('The Github preview server', () => {
     // Await the update
     var i = 0;
     socket.on('document', doc => {
+      expect(doc.title).to.be.a('string');
+      expect(doc.markdown).to.be.a('string');
+      expect(doc.file).to.be.a('string');
       switch(i) {
         case 0:
-          assert.strictEqual(doc.markdown, '# Foo!');
-          assert.strictEqual(doc.file, '/bar/foo.md');
-          assert.strictEqual(doc.title, 'foo.md');
+          // This is the sample document.
+          // It is always emitted as the first document.
+          expect(doc.title).to.equal('Welcome');
           i = i + 1;
           break;
         case 1:
-          assert.strictEqual(doc.markdown, '# Bar!');
-          assert.strictEqual(doc.file, 'foo.md');
-          assert.strictEqual(doc.title, 'foo.md');
+          expect(doc.file).to.equal('/bar/foo.md');
+          expect(doc.title).to.equal('foo.md');
+          expect(doc.markdown).to.equal('# Foo!');
+          i = i + 1;
+          break;
+        case 2:
+          expect(doc.file).to.equal('foo.md');
+          expect(doc.title).to.equal('foo.md');
+          expect(doc.markdown).to.equal('# Bar!');
           socket.destroy();
           i = i + 1;
           deferred.resolve({});
