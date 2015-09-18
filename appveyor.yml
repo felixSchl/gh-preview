@@ -4,6 +4,11 @@ environment:
   - nodejs_version: "0.11"
   - nodejs_version: "0.12"
   - nodejs_version: "4.0"
+cache:
+  - C:\Users\appveyor\AppData\Roaming\npm\node_modules\bin\bower
+  - C:\Users\appveyor\AppData\Roaming\npm\node_modules\bin\gulp
+  - C:\Users\appveyor\AppData\Roaming\npm-cache -> package.json
+  - node_modules -> package.json 
 install:
   - npm install -g gulp
   - npm install -g bower
