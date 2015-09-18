@@ -46,8 +46,8 @@ Options:
 
 ### Where is my editor?
 
-If you have written a plugin for your favourite editor, open an issue on
-github and have it mentioned here.
+Feel free to contribute an editor plugin for your favourite editor and open an
+issue on github to have it mentioned here.
 
 ### How to write an editor plugin?
 
