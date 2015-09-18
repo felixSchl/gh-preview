@@ -105,7 +105,7 @@ export default class Server {
       })
 
       /**
-       * Fetch a given doucment.
+       * Create a document.
        *
        * @param {String} req.body.file
        * The name of the file to store.
