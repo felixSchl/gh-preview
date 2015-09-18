@@ -1,8 +1,12 @@
 *.sw[mnopqrstuvwxyz]
 *.pyc
 *.un~
+.eslintrc
+gulpfile.js
 node_modules/
 client/vendor/
 client/src/
 vim/
 bower.json
+src/
+test/
