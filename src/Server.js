@@ -8,17 +8,23 @@ import express from 'express';
 import socketIO from 'socket.io';
 import bodyParser from 'body-parser';
 
-const __SAMPLE__ = {
+const mkSample = port => ({
   file: 'Welcome'
 , title: 'Welcome'
 , markdown:
 `
-# Welcome to gh-preview
+# Github markdown preview server
+
+<div class='banner' style='text-align: center'>
+  <a href="http://localhost:${ port }">
+    Serving at http://localhost:${ port }
+  </a>
+</div>
 
 > :bulb: There are currently no documents being previewed - in order to start
-> a live preview, perform an \`HTTP POST\` to \`/api/doc/\`.
+> a live preview, [perform an \`HTTP POST\` to \`/api/doc/\`.](#how-to)
 
-## Choose your text editor plugin:
+### Choose your text editor plugin:
 
 * [Vim (felixschl/vim-gh-preview)](https://github.com/felixschl/vim-gh-preview)
 
@@ -27,7 +33,7 @@ const __SAMPLE__ = {
 If you have written a plugin for your favourite editor, open an issue on
 github and have it mentioned here.
 
-#### How to write an editor plugin?
+##### How to write an editor plugin?
 
 Simply have your editor perform \`HTTP POST\` requests to the running
 gh-preview instance. The plugin may optionally start a new gh-preview server.
@@ -36,14 +42,13 @@ For command line usage, refer to the \`README\`.
 To see an example usage, check out the tests and the
 [vim plugin](https://github.com/felixschl/vim-gh-preview). From the tests:
 
+<a name='how-to'></a>
 \`\`\`javascript
-yield request.postAsync({
-  url: 'localhost:1234/api/doc'
-, json: {
-    'file': '/bar/foo.md'
-  , 'markdown': '# Foo!'
-  }
-});
+import request from 'request';
+request.post({
+  url:  'localhost:${ port }/api/doc'
+, json: { 'file': '/bar/foo.md'
+        , 'markdown': '# Foo!' }});
 \`\`\`
 
 This will create a document titled \`foo.md\`, with the markdown being
@@ -53,9 +58,9 @@ the \`gh-preview\` server.
 ## Contributing
 
 Please file issues and bug reports, as well as feature request on the [github
-issue tracker](https://github.com/felixSchl/gh-preview/issues)
+issue tracker](https://github.com/felixSchl/gh-preview/issues).
 `
-};
+});
 
 
 /**
@@ -190,7 +195,7 @@ export default class Server {
      * Let attached socket know about all current documents.
      */
     _.each(
-        this._docs.length ? this._docs : [ __SAMPLE__ ]
+        this._docs.length ? this._docs : [ mkSample(this._port) ]
       , socket.emit.bind(socket, 'document'));
   }
 
@@ -204,6 +209,7 @@ export default class Server {
    */
 
   listen(port) {
+    this._port = port;
     this._logger.info(`Listening on port ${ port }...`);
     this._server.listen(port);
   }

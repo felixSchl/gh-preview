@@ -17,3 +17,14 @@ label[for^='checkbox'] {
 article#content {
     padding-top: 0 !important;
 }
+
+@keyframes pulsate {
+    0%   { background-color: rgba(184, 222, 172, 0.3); }
+    50%  { background-color: rgba(184, 222, 172, 0.8); }
+    100% { background-color: rgba(184, 222, 172, 0.3); }
+}
+
+.banner {
+    margin-bottom: 20px;
+    animation: pulsate 8s infinite;
+}
