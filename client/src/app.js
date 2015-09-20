@@ -53,10 +53,26 @@ md.use(Anchors, { permalink: true
  */
 const render = markdown => Promise.resolve(md.render(markdown));
 
+const ConnectionStatus = {
+  CONNECTED:    'connected'
+, DISCONNECTED: 'disconnected'
+}
+
 /*
  * A stream of `Document`s.
  */
 const socket = IO(window.location.href, { forceNew: true })
+  , onStatusChanged = Rx.Observable
+    .merge(
+      _.map(
+        [ ['connect',         ConnectionStatus.CONNECTED]
+        , ['error',           ConnectionStatus.DISCONNECTED]
+        , ['disconnect',      ConnectionStatus.DISCONNECTED]
+        , ['reconnect',       ConnectionStatus.DISCONNECTED]
+        , ['reconnect_error', ConnectionStatus.DISCONNECTED]
+        , ['reconned_failed', ConnectionStatus.DISCONNECTED] ]
+      , ([e, s]) => Rx.Observable.fromEvent(socket, e).map(_.constant(s))))
+    .distinctUntilChanged()
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'document')
   , onDocumentChanged = onSourceChanged
       .flatMapLatest(doc =>
@@ -79,7 +95,16 @@ class Preview extends React.Component {
     this.state = {
       documents: {}
     , activeDocument: null
+    , status: ConnectionStatus.CONNECTED
     };
+
+    props.onStatusChanged
+      .subscribe(status => {
+        this.setState(state => {
+          state.status = status;
+          return status;
+        })
+      });
 
     /**
      * Book-keep documents and route their pub/subs
@@ -99,7 +124,13 @@ class Preview extends React.Component {
 
   render() {
     return (
-    <div>
+    <div className={ 'preview ' + this.state.status }>
+      <div
+        id='status-indicator'
+        className={ this.state.status }>
+        <span className='title'>status:</span>
+        <span className='indicator'>{ this.state.status }</span>
+      </div>
       { (this.state.activeDocument)
           ? <DocumentPreview document={ this.state.activeDocument }/>
           : <div id='connecting'>Connecting...</div>
@@ -164,6 +195,8 @@ class DocumentPreview extends React.Component {
 };
 
 React.render(
-  <Preview onDocumentChanged={ onDocumentChanged }/>
+  <Preview
+    onStatusChanged={ onStatusChanged }
+    onDocumentChanged={ onDocumentChanged } />
 , document.getElementById('main')
 );

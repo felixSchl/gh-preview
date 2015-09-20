@@ -1,6 +1,7 @@
 #readme {
-margin: 50px auto;
-width: 790px;
+    margin: 0 auto;
+    padding-top: 50px;
+    width: 790px;
 }
 
 label[for^='checkbox'] {
@@ -43,4 +44,40 @@ article#content {
 
 .markdown-body h4 .anchor {
     top: 8px;
+}
+
+@keyframes hideindicator {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+#status-indicator {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 4px;
+}
+
+#status-indicator .title {
+    font-weight: bold;
+    padding-right: 4px;
+}
+
+#status-indicator.connected {
+    color: green;
+    -webkit-transition: opacity 3s ease-in-out;
+    -moz-transition: opacity 3s ease-in-out;
+    -ms-transition: opacity 3s ease-in-out;
+    -o-transition: opacity 3s ease-in-out;
+    opacity: 0.5;
+}
+
+#status-indicator.disconnected {
+    color: red;
+    font-weight: bold;
+    -webkit-transition: opacity 0.25s ease-in-out;
+    -moz-transition: opacity 0.25s ease-in-out;
+    -ms-transition: opacity 0.25s ease-in-out;
+    -o-transition: opacity 0.25s ease-in-out;
+    opacity: 1;
 }
