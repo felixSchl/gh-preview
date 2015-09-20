@@ -88,9 +88,6 @@ focused and hence the following items, albeit relatively simple tasks, are
 likely to remain wishes for the future to come.
 
 * [ ] Show the caret in the output
-* [ ] Implement `:GhPreviewOpenBrowser` command for vim
-* [ ] Implement `:GhPreviewStart` command for vim
-* [ ] Implement `:GhPreviewStop` command for vim
 * [ ] Improve error reporting if the server goes away, etc.
 * [ ] Improve scroll synchronization
 
