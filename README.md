@@ -88,7 +88,6 @@ focused and hence the following items, albeit relatively simple tasks, are
 likely to remain wishes for the future to come.
 
 * [ ] Show the caret in the output
-* [ ] Improve error reporting if the server goes away, etc.
 * [ ] Improve scroll synchronization
 
 ## Contributing
