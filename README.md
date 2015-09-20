@@ -18,8 +18,9 @@ efficiencies of using a copy of the vim text editor.
 
 * Preview rendered markdown as you type
 * Output is rendered as if it was already on github
-* [Editor-friendly](#editor-support)
-* **Since v0.2.2**: Scroll synchronization, inspired by [Ghost](https://ghost.org/).
+* [Editor-friendly](#editor-integration)
+* Scroll synchronization, inspired by [Ghost](https://ghost.org/) <sub>&mdash; since v0.2.2</sub>
+* Heading anchors <sub>&mdash; since v1.0.1-next</sub>
 
 
 ## Getting started
@@ -87,7 +88,6 @@ focused and hence the following items, albeit relatively simple tasks, are
 likely to remain wishes for the future to come.
 
 * [ ] Show the caret in the output
-* [ ] Anchor tag support for permalinks in headings
 * [ ] Implement `:GhPreviewOpenBrowser` command for vim
 * [ ] Implement `:GhPreviewStart` command for vim
 * [ ] Implement `:GhPreviewStop` command for vim

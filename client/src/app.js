@@ -7,6 +7,7 @@ import Promise from 'bluebird';
 import MarkdownIt from 'markdown-it';
 import Emoj from 'markdown-it-emoj';
 import Checkbox from 'markdown-it-checkbox';
+import Anchors from 'markdown-it-anchor';
 import Highlight from 'highlightjs';
 import IO from 'socket.io';
 import { scrollToY } from './animate';
@@ -38,6 +39,14 @@ md.use(Emoj);
  * Enable task lists
  */
 md.use(Checkbox);
+
+/*
+ * Enable anchors
+ */
+md.use(Anchors, { permalink: true
+                , permalinkClass: 'anchor'
+                , permalinkSymbol: '<span class="octicon octicon-link"></span>'
+                , permalinkBefore: true });
 
 /*
  * Render a markdown document.

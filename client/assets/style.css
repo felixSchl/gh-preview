@@ -28,3 +28,19 @@ article#content {
     margin-bottom: 20px;
     animation: pulsate 8s infinite;
 }
+
+.markdown-body h1 .anchor {
+    top: 16px;
+}
+
+.markdown-body h2 .anchor {
+    top: 8px;
+}
+
+.markdown-body h3 .anchor {
+    top: 8px;
+}
+
+.markdown-body h4 .anchor {
+    top: 8px;
+}

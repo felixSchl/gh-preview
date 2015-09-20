@@ -16,7 +16,10 @@ gulp.task('make:client', function(){
 
     .transform(babelify.configure({
       extensions: ['.js']
-    , ignore: ['./client/vendor/']
+    , ignore: [
+        './client/vendor/'
+      , './node_modules/'
+      ]
     }))
 
     /**
@@ -38,6 +41,9 @@ gulp.task('make:client', function(){
     .require(
       './client/vendor/markdown-it/dist/markdown-it.min.js'
     , { expose: 'markdown-it' })
+    .require(
+      './node_modules/markdown-it-anchor/index.js'
+    , { expose: 'markdown-it-anchor' })
     .require(
       './client/vendor/markdown-it-emoji/dist/markdown-it-emoji.min.js'
     , { expose: 'markdown-it-emoj' })
