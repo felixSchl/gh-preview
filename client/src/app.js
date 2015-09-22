@@ -75,15 +75,12 @@ const socket = IO(window.location.href, { forceNew: true })
     .distinctUntilChanged()
   , onSourceChanged = Rx.Observable.fromEvent(socket, 'document')
   , onDocumentChanged = onSourceChanged
-      .flatMapLatest(doc =>
-        ((!doc.markdown)
-          ? Rx.Observable.empty()
-          : Rx.Observable.fromPromise(render(doc.markdown))
-              .map(markup => ({
-                title: doc.title
-              , offset: ((1/(doc.lines || 1)) * doc.cursor)
-              , markup: markup
-              }))));
+      .filter(doc => doc.markdown)
+      .map(doc => ({
+        title: doc.title
+      , offset: ((1/(doc.lines || 1)) * doc.cursor)
+      , markup: md.render(doc.markdown)
+      }));
 
 /**
  * The <Preview/> component renders a list of documents
