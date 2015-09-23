@@ -51,11 +51,14 @@ article#content {
     100% { opacity: 0; }
 }
 
-#status-indicator {
+#hud {
     position: fixed;
     bottom: 0;
     right: 0;
     padding: 4px;
+}
+
+#status-indicator {
 }
 
 #status-indicator .title {

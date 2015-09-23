@@ -93,6 +93,7 @@ class Preview extends React.Component {
       documents: {}
     , activeDocument: null
     , status: ConnectionStatus.CONNECTED
+    , locked: false
     };
 
     props.onStatusChanged
@@ -119,17 +120,24 @@ class Preview extends React.Component {
     });
   }
 
+  toggleLock () {
+    this.setState(state => {
+      state.locked = !state.locked;
+      return state;
+    });
+  }
+
   render() {
     return (
     <div className={ 'preview ' + this.state.status }>
-      <div
-        id='status-indicator'
-        className={ this.state.status }>
-        <span className='title'>status:</span>
-        <span className='indicator'>{ this.state.status }</span>
-      </div>
+      <Hud
+        toggleLock={ this.toggleLock.bind(this) }
+        status={ this.state.status }
+        locked={ this.state.locked } />
       { (this.state.activeDocument)
-          ? <DocumentPreview document={ this.state.activeDocument }/>
+          ? <DocumentPreview
+              document={ this.state.activeDocument }
+              locked={ this.state.locked } />
           : <div id='connecting'>Connecting...</div>
       }
     </div>
@@ -145,7 +153,7 @@ class DocumentPreview extends React.Component {
   constructor (props) {
     super(props);
     this.state = {
-      locked: false
+      position: 0
     };
   }
 
@@ -158,7 +166,7 @@ class DocumentPreview extends React.Component {
   }
 
   updateScroll () {
-    if (!this.state.locked) {
+    if (!this.props.locked) {
       const position =
         React.findDOMNode(this.refs.wrapper).offsetHeight
           * this.props.document.offset;
@@ -190,6 +198,35 @@ class DocumentPreview extends React.Component {
     );
   }
 };
+
+
+/**
+ * The <Hud/> component renders the heads-up-display
+ */
+class Hud extends React.Component {
+  constructor (props) {
+    super(props);
+    this.state = {};
+  }
+
+  render() {
+    return (
+      <div id='hud'>
+        <div id='scroll-locker'>
+          <button onClick={ this.props.toggleLock }>
+            { this.props.locked ? 'unlock scroll' : 'lock scroll' }
+          </button>
+        </div>
+        <div
+          id='status-indicator'
+          className={ this.props.status }>
+          <span className='title'>status:</span>
+          <span className='indicator'>{ this.props.status }</span>
+        </div>
+      </div>
+    );
+  }
+}
 
 React.render(
   <Preview
