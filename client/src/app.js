@@ -1,5 +1,3 @@
-'use strict'
-
 import React from 'react';
 import _ from 'lodash';
 import Rx from 'rxjs';
@@ -11,6 +9,8 @@ import Anchors from 'markdown-it-anchor';
 import Highlight from 'highlightjs';
 import IO from 'socket.io';
 import { scrollToY } from './animate';
+import { Preview } from './components';
+import { ConnectionStatus } from './constants';
 
 /*
  * Set up markdown renderer.
@@ -49,16 +49,6 @@ md.use(Anchors, { permalink: true
                 , permalinkBefore: true });
 
 /*
- * Render a markdown document.
- */
-const render = markdown => Promise.resolve(md.render(markdown));
-
-const ConnectionStatus = {
-  CONNECTED:    'connected'
-, DISCONNECTED: 'disconnected'
-}
-
-/*
  * A stream of `Document`s.
  */
 const socket = IO(window.location.href, { forceNew: true })
@@ -81,152 +71,6 @@ const socket = IO(window.location.href, { forceNew: true })
       , offset: ((1/(doc.lines || 1)) * doc.cursor)
       , markup: md.render(doc.markdown)
       }));
-
-/**
- * The <Preview/> component renders a list of documents
- */
-class Preview extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      documents: {}
-    , activeDocument: null
-    , status: ConnectionStatus.CONNECTED
-    , locked: false
-    };
-
-    props.onStatusChanged
-      .subscribe(status => {
-        this.setState(state => {
-          state.status = status;
-          return status;
-        })
-      });
-
-    /**
-     * Book-keep documents and route their pub/subs
-     */
-    props.onDocumentChanged.subscribe(doc => {
-      this.setState(state => {
-        if (_.has(state.documents, doc.file)) {
-          _.assign(state.documents[doc.file], doc);
-        } else {
-          state.documents[doc.file] = doc;
-        }
-        state.activeDocument = doc;
-        return state;
-      });
-    });
-  }
-
-  toggleLock () {
-    this.setState(state => {
-      state.locked = !state.locked;
-      return state;
-    });
-  }
-
-  render() {
-    return (
-    <div className={ 'preview ' + this.state.status }>
-      <Hud
-        toggleLock={ this.toggleLock.bind(this) }
-        status={ this.state.status }
-        locked={ this.state.locked } />
-      { (this.state.activeDocument)
-          ? <DocumentPreview
-              document={ this.state.activeDocument }
-              locked={ this.state.locked } />
-          : <div id='connecting'>Connecting...</div>
-      }
-    </div>
-    );
-  }
-}
-
-/**
- * The <DocumentPreview/> component renders a single document.
- */
-class DocumentPreview extends React.Component {
-
-  constructor (props) {
-    super(props);
-    this.state = {
-      position: 0
-    };
-  }
-
-  componentDidMount () {
-    this.updateScroll();
-  }
-
-  componentDidUpdate () {
-    this.updateScroll();
-  }
-
-  updateScroll () {
-    if (!this.props.locked) {
-      const position =
-        React.findDOMNode(this.refs.wrapper).offsetHeight
-          * this.props.document.offset;
-      scrollToY(position, 2000, 'linear');
-    }
-  }
-
-  render () {
-    const document = this.props.document;
-    return (
-      <div>
-        <div id='readme'
-          className='boxed-group flush clearfix announce instapaper_body md'>
-          <h3>
-            <span className='octicon octicon-book'></span>
-            <span className='title'>{ document.title }</span>
-          </h3>
-          <article id='content'
-            ref={'wrapper'}
-            className='markdown-body entry-content'
-            style={{ position: 'relative' }}>
-            <div dangerouslySetInnerHTML={{ __html: document.markup }}/>
-            <div
-              style={{ position: 'absolute', top: this.state.position }}>
-            </div>
-          </article>
-        </div>
-      </div>
-    );
-  }
-};
-
-
-/**
- * The <Hud/> component renders the heads-up-display
- */
-class Hud extends React.Component {
-  constructor (props) {
-    super(props);
-    this.state = {};
-  }
-
-  render() {
-    return (
-      <div id='hud'>
-        <div id='scroll-locker'>
-          <button onClick={ this.props.toggleLock }>
-            { this.props.locked ? 'unlock scroll' : 'lock scroll' }
-          </button>
-        </div>
-        <div
-          id='status-indicator'
-          className={ this.props.status }>
-          <span className='title'>status:</span>
-          <span className='indicator'>{ this.props.status }</span>
-        </div>
-      </div>
-    );
-  }
-}
 
 React.render(
   <Preview
