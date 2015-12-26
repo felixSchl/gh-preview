@@ -4,8 +4,9 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha --reporter=list --compilers js:babel/register test --verbose",
-    "build": "npm install -g gulp-cli && npm install && bower install && gulp",
+    "test": "gulp && mocha --reporter=list --compilers js:babel/register test --verbose",
+    "postinstall": "bower --config.interactive=false install",
+    "build": "gulp",
     "start": "node index.js"
   },
   "author": "",
@@ -13,6 +14,7 @@
   "dependencies": {
     "bluebird": "2.9.24",
     "body-parser": "^1.13.3",
+    "bower": "^1.7.1",
     "docoptmd": "^0.1.2",
     "ejs": "2.2.4",
     "express": "4.11.2",

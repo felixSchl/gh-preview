@@ -60,7 +60,7 @@ var bundler = browserify({
     './client/vendor/socket.io-client/socket.io.js'
   , { expose: 'socket.io' })
 
-gulp.task('make:client', function(){
+gulp.task('build:client', function(){
   bundler
     .bundle()
     .on('error', function(err) {
@@ -69,7 +69,7 @@ gulp.task('make:client', function(){
     .pipe(fs.createWriteStream('./client/app.js'));
 });
 
-gulp.task('make:server', function () {
+gulp.task('build:server', function () {
   return gulp.src(['src/**/*.js'])
     .pipe(sourcemaps.init())
     .pipe(babel())
@@ -77,9 +77,9 @@ gulp.task('make:server', function () {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('make', [ 'make:client', 'make:server' ]);
+gulp.task('build', [ 'build:client', 'build:server' ]);
 
-gulp.task('watch:client', [ 'make:client' ], function() {
+gulp.task('watch:client', [ 'build:client' ], function() {
 
   livereactload.monitor(
     './client/app.js'
@@ -104,10 +104,10 @@ gulp.task('watch:client', [ 'make:client' ], function() {
   }
 });
 
-gulp.task('watch:server', [ 'make:server' ], function() {
-  return gulp.watch('./src/**/*.js', [ 'make:server' ]);
+gulp.task('watch:server', [ 'build:server' ], function() {
+  return gulp.watch('./src/**/*.js', [ 'build:server' ]);
 });
 
 gulp.task('watch', [ 'watch:client', 'watch:server' ]);
 
-gulp.task('default', [ 'make' ]);
+gulp.task('default', [ 'build' ]);

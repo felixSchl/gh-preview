@@ -95,12 +95,7 @@ likely to remain wishes for the future to come.
 Business as usual. Get started by running the test suite:
 
 ```
-git clone git@github.com:felixschl/gh-preview
-cd gh-preview
-npm install -g gulp
-npm install
-gulp
-npm test
+npm run test
 ```
 
 Then fix bug / add feature and submit a pull request.
